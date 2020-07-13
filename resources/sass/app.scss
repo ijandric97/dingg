@@ -6,3 +6,29 @@
 
 // Bootstrap
 @import '~bootstrap/scss/bootstrap';
+
+// Custom CSS
+.border-2 {
+    border-width: 2px !important;
+}
+
+.border-orange {
+    border-color: $orange !important;
+}
+
+.border-no-right {
+    border-right: none;
+}
+
+.fb-50 {
+    filter: brightness(50%);
+}
+
+.card-hover-gray {
+    transition: all 0.5s;
+}
+
+.card-hover-gray:hover {
+    filter: grayscale(100%);
+    cursor: pointer;
+}
