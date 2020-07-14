@@ -17,7 +17,7 @@ class UserSeeder extends Seeder
     {
         $faker = \Faker\Factory::create(); // FIXME: Remove this and get proper pictures :)
 
-        User::truncate();
+        //User::truncate();
 
         $users = [
             ['name' => 'food_city_hamburger', 'email' => 'food_city_hamburger@test.com', 'password' => bcrypt('12345678'),
