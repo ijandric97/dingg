@@ -24,13 +24,14 @@
 
 
     <!-- Categories -->
-    <h1 class="d-inline mr-2">Categories</h1>
+    <h1 class="d-inline-block mr-2 mb-3">Categories</h1>
     <a class="btn btn-outline-primary mb-3" href="{{route('category.index')}}" role="button">View all</a>
 
     <!-- Categories sections -->
-    <div class="row justify-content-center mb-5">
+    <div class="row justify-content-center mb-5 mx-0">
         @forelse ($categories as $category)
-            <div class="card card-hover-gray bg-dark text-white border-0 m-1 text-right" style="width: 18rem;">
+        <div class="col-4 p-0">
+            <div class="card card-hover-gray bg-dark text-white border-0 m-1 text-right">
                 <div class="border-top border-2 border-orange">
                     <img src="{{asset('storage/images/category/' . $category->image_path)}}" class="card-img-top fb-50" alt="...">
                     <div class="card-img-overlay border-bottom border-2 border-success">
@@ -40,6 +41,7 @@
                     </div>
                 </div>
             </div>
+        </div>
         @empty
             <div class="alert alert-danger" role="alert">
                 ERROR: No categories found!

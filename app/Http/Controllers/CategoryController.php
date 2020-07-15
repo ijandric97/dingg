@@ -15,9 +15,6 @@ class CategoryController extends Controller
     public function index()
     {
         $categories = Category::all();
-        foreach ($categories as $category) {
-            # TODO -> some kind of join on restaurants to get how many restaurants ar ein category just like in wolt...
-        }
 
         return view('category.index', ['categories' => $categories]);
     }

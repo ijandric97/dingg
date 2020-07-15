@@ -22,7 +22,11 @@ class DatabaseSeeder extends Seeder
         $restaurant = App\Restaurant::find(1);
         $restaurant->owner()->associate($user);
 
-        dd($user->ownedRestaurants());
+        $category = App\Category::find(1);
+        $restaurant = App\Restaurant::find(1);
+        $restaurant->categories()->attach($category);
+        
+        //dd($user->ownedRestaurants());
         //$user->ownedRestaurants()->add($restaurant); dpes not work
     }
 }

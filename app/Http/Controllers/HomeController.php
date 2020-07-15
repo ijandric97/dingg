@@ -24,6 +24,6 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home', ['categories' => Category::all()->random(3)]);
+        return view('home', ['categories' => Category::inRandomOrder()->limit(3)->get()]);
     }
 }

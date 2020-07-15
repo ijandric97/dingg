@@ -11,4 +11,9 @@ class Category extends Model
     public function restaurants() {
         return $this->belongsToMany("App\Restaurant");
     }
+
+    // Check help doc on Eloquent: Mutators
+    public function getCountAttribute() {
+        return count($this->restaurants);
+    }
 }
