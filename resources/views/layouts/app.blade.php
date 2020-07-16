@@ -3,7 +3,7 @@
 <head>
     @include("includes.head")
 </head>
-<body>
+<body class="bg-primary">
     <div id="app">  
         @include("includes.navbar")
         <main class="py-4 bg-white">

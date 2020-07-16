@@ -21,6 +21,7 @@ class CreateRestaurantsTable extends Migration
             $table->string('address');
             $table->string('phone');
             $table->string('website');
+            $table->string('image_path');
             $table->foreignId('owner_id')->constrained('users');
         });
     }
