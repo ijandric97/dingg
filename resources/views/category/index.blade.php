@@ -33,6 +33,19 @@
                         </div>
                     </div>
                 </div>
+                
+                <!-- Admin section -->
+                @can('is-admin', Auth::user())
+                <div class="ml-1 mr-1 mb-5" style="">
+                    <button type="button" class="btn btn-warning border border-dark">
+                        EDIT
+                    </button>
+                    <button type="button" class="btn btn-danger border border-dark" data-toggle="modal" data-target="#deleteCategoryModal"
+                        data-title="{{$category->name}}">
+                        DELETE
+                    </button>
+                </div>
+                @endcan
             </div>
         @empty
             <div class="alert alert-danger" role="alert">
@@ -40,5 +53,41 @@
             </div>
         @endforelse
     </div>
+
+    <!-- Admin section -->
+    <div class="modal fade" id="deleteCategoryModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white" style="margin-left: -1px;">
+                    <h5 class="modal-title" id="deleteCategoryModalTitle">ARE YOU SURE?</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>This action will permanently delete this category from the database. There is no going back after this.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-dismiss="modal">NO, GO BACK</button>
+                    <button type="button" class="btn btn-danger">YES, DELETE</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
-@endsection	
+@endsection
+
+@section("scripts")
+@can('is-admin', Auth::user())
+<script>
+    $('#deleteCategoryModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget)
+        var categoryName = button.data('title').toUpperCase();
+        var modal = $(this)
+        modal.find('.modal-title').text('Delete ' + categoryName + ' category?')
+        modal.find('.btn-danger').text('YES, DELETE ' + categoryName)
+    })
+</script>
+@endcan
+@endsection

@@ -22,7 +22,6 @@
     <!-- here we put reccomended restaurants for user stuff -->
     @endguest
 
-
     <!-- Categories -->
     <h1 class="d-inline-block mr-2 mb-3">Categories</h1>
     <a class="btn btn-outline-primary mb-3" href="{{route('category.index')}}" role="button">View all</a>

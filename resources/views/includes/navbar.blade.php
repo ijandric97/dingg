@@ -1,3 +1,8 @@
+@can('is-admin', Auth::user())
+<div class="bg-dark text-danger text-center" role="alert">
+    ADMINISTRATOR MODE - BE CAREFUL!
+</div>
+@endcan
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary border-bottom border-2 border-orange">
     <div class="container">
         <!-- Dingg "logo" -->
