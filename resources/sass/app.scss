@@ -32,3 +32,7 @@
     filter: grayscale(100%);
     cursor: pointer;
 }
+
+.rounded-2 {
+    border-radius: $border-radius * 2 !important;
+}

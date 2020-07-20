@@ -11,7 +11,11 @@
     </nav>
 
     <!-- Title -->
-    <h1 class="">Categories</h1>
+    <h1 class="d-inline-block">Categories</h1>
+
+    @can('is-admin', Auth::user())
+        <a class="btn btn-success" href="#" role="button">Create new ticket</a>
+    @endcan
 
     <!-- Description -->
     @if (count($categories) > 0)
@@ -22,10 +26,10 @@
     <div class="row justify-content-start" style="margin: 0px -3px;">
         @forelse ($categories as $category)
             <div class="col-md-4 col-sm-6 p-0">
-                <div class="card card-hover-gray bg-dark text-white border-0 m-1">
-                    <div class="border-top border-2 border-orange">
-                        <img src="{{asset('storage/images/category/' . $category->image_path)}}" class="card-img-top fb-50" alt="...">
-                        <div class="card-img-overlay border-bottom border-2 border-success">
+                <div class="card card-hover-gray bg-dark text-white border-0 m-1 rounded">
+                    <div class="border-top border-2 border-orange rounded">
+                        <img src="{{asset('storage/images/category/' . $category->image_path)}}" class="card-img-top fb-50 rounded" alt="...">
+                        <div class="card-img-overlay border-bottom border-2 border-success rounded">
                             <h3 class="card-title mb-0 font-weight-bold ">{{$category->name}}</h3>
                             <p class="card-text mb-0 font-weight-bold">{{$category->description}}</p>
                             <span class="badge badge-primary">{{$category->count}} Restaurants</span>
@@ -37,12 +41,8 @@
                 <!-- Admin section -->
                 @can('is-admin', Auth::user())
                 <div class="ml-1 mr-1 mb-5" style="">
-                    <button type="button" class="btn btn-warning border border-dark">
-                        EDIT
-                    </button>
-                    <button type="button" class="btn btn-danger border border-dark" data-toggle="modal" data-target="#deleteCategoryModal"
-                        data-title="{{$category->name}}">
-                        DELETE
+                    <button type="button" class="btn btn-info">EDIT</button>
+                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteCategoryModal" data-title="{{$category->name}}">DELETE
                     </button>
                 </div>
                 @endcan

@@ -18,8 +18,8 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <!-- Search Bar -->
             <form class="form-inline ml-auto my-auto">
-                <input class="form-control mt-2 mt-sm-0 border-no-right border-secondary" type="search" placeholder="Pizza place..." aria-label="Search">
-                <button class="btn btn-light btn-outline-secondary my-2 my-sm-0" type="submit">Search</button>
+                <input class="form-control mt-2 mt-sm-0 border-no-right border-secondary" type="search" placeholder="Pizza place..." aria-label="Search" style="border-radius: 0.25rem 0 0 0.25rem;">
+                <button class="btn btn-light btn-outline-secondary my-2 my-sm-0" type="submit" style="border-radius: 0 0.25rem 0.25rem 0;">Search</button>
             </form>
 
             <!-- User / Login Section -->
