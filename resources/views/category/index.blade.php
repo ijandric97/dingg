@@ -14,7 +14,7 @@
     <h1 class="d-inline-block">Categories</h1>
 
     @can('is-admin', Auth::user())
-        <a class="btn btn-success" href="#" role="button">Create new ticket</a>
+        <a class="btn btn-success ml-2 align-text-bottom" href="{{route('category.create')}}" role="button">Create Category</a>
     @endcan
 
     <!-- Description -->
@@ -26,7 +26,7 @@
     <div class="row justify-content-start" style="margin: 0px -3px;">
         @forelse ($categories as $category)
             <div class="col-md-4 col-sm-6 p-0">
-                <div class="card card-hover-gray bg-dark text-white border-0 m-1 rounded">
+                <div class="card card-hover-blur bg-dark text-white border-0 m-1 rounded">
                     <div class="border-top border-2 border-orange rounded">
                         <img src="{{asset('storage/images/category/' . $category->image_path)}}" class="card-img-top fb-50 rounded" alt="...">
                         <div class="card-img-overlay border-bottom border-2 border-success rounded">
@@ -34,18 +34,16 @@
                             <p class="card-text mb-0 font-weight-bold">{{$category->description}}</p>
                             <span class="badge badge-primary">{{$category->count}} Restaurants</span>
                             <a href="{{route('category.show', $category->id)}}" class="stretched-link"></a>
+                            <!-- Admin section -->
+                            @can('is-admin', Auth::user())
+                            <div class="mt-2 d-flex">
+                                <a class="btn btn-warning on-top" href="{{route('category.edit', $category->id)}}" role="button" style="border-radius: 0.25rem 0 0 0.25rem;">Edit</a>
+                                <button type="button" class="btn btn-danger on-top" data-toggle="modal" data-target="#deleteCategoryModal" data-title="{{$category->name}}" style="border-radius: 0 0.25rem 0.25rem 0;">Delete</button>
+                            </div>
+                            @endcan
                         </div>
                     </div>
                 </div>
-                
-                <!-- Admin section -->
-                @can('is-admin', Auth::user())
-                <div class="ml-1 mr-1 mb-5" style="">
-                    <button type="button" class="btn btn-info">EDIT</button>
-                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteCategoryModal" data-title="{{$category->name}}">DELETE
-                    </button>
-                </div>
-                @endcan
             </div>
         @empty
             <div class="alert alert-danger" role="alert">

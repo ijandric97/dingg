@@ -30,7 +30,7 @@
     <div class="row justify-content-center mb-5" style="margin: 0px -3px;">
         @forelse ($categories as $category)
             <div class="col-md-4 col-sm-6 p-0">
-                <div class="card card-hover-gray bg-dark text-white border-0 m-1">
+                <div class="card card-hover-blur bg-dark text-white border-0 m-1">
                     <div class="border-top border-2 border-orange">
                         <img src="{{asset('storage/images/category/' . $category->image_path)}}" class="card-img-top fb-50" alt="...">
                         <div class="card-img-overlay border-bottom border-2 border-success">
@@ -56,7 +56,7 @@
     <!-- Restaurant sections TODO: change from categories to restaurants -->
     <div class="row justify-content-center mb-5">
         @forelse ($categories as $category)
-            <div class="card card-hover-gray bg-dark text-white border-0 m-1 text-right" style="width: 18rem;">
+            <div class="card card-hover-blur bg-dark text-white border-0 m-1 text-right" style="width: 18rem;">
                 <div class="border-top border-2 border-orange">
                     <img src="{{asset('storage/images/category/' . $category->image_path)}}" class="card-img-top fb-50" alt="...">
                     <div class="card-img-overlay border-bottom border-2 border-success">

@@ -22,17 +22,19 @@
 
 .fb-50 {
     filter: brightness(50%);
-}
-
-.card-hover-gray {
     transition: all 0.5s;
 }
 
-.card-hover-gray:hover {
-    filter: grayscale(100%);
+.card-hover-blur:hover .fb-50 {
+    filter: brightness(50%) blur(5px);
     cursor: pointer;
 }
 
 .rounded-2 {
     border-radius: $border-radius * 2 !important;
+}
+
+.on-top {
+    position: relative;
+    z-index: 10;
 }
