@@ -26,22 +26,20 @@
     <div class="row justify-content-start" style="margin: 0px -3px;">
         @forelse ($categories as $category)
             <div class="col-md-4 col-sm-6 p-0">
-                <div class="card card-hover-blur bg-dark text-white border-0 m-1 rounded">
-                    <div class="border-top border-2 border-orange rounded">
-                        <img src="{{asset('storage/images/category/' . $category->image_path)}}" class="card-img-top fb-50 rounded" alt="...">
-                        <div class="card-img-overlay border-bottom border-2 border-success rounded">
-                            <h3 class="card-title mb-0 font-weight-bold ">{{$category->name}}</h3>
-                            <p class="card-text mb-0 font-weight-bold">{{$category->description}}</p>
-                            <span class="badge badge-primary">{{$category->count}} Restaurants</span>
-                            <a href="{{route('category.show', $category->id)}}" class="stretched-link"></a>
-                            <!-- Admin section -->
-                            @can('is-admin', Auth::user())
-                            <div class="mt-2 d-flex">
-                                <a class="btn btn-warning on-top" href="{{route('category.edit', $category->id)}}" role="button" style="border-radius: 0.25rem 0 0 0.25rem;">Edit</a>
-                                <button type="button" class="btn btn-danger on-top" data-toggle="modal" data-target="#deleteCategoryModal" data-title="{{$category->name}}" style="border-radius: 0 0.25rem 0.25rem 0;">Delete</button>
-                            </div>
-                            @endcan
+                <div class="card card-hover-blur bg-dark text-white dingg-border m-1 rounded">
+                    <img src="{{asset('storage/images/category/' . $category->image_path)}}" class="card-img-top fb-50 rounded" alt="...">
+                    <div class="card-img-overlay rounded">
+                        <h3 class="card-title mb-0 font-weight-bold ">{{$category->name}}</h3>
+                        <p class="card-text mb-0 font-weight-bold">{{$category->description}}</p>
+                        <span class="badge badge-primary">{{$category->count}} Restaurants</span>
+                        <a href="{{route('category.show', $category->id)}}" class="stretched-link"></a>
+                        <!-- Admin section -->
+                        @can('is-admin', Auth::user())
+                        <div class="mt-2 d-flex">
+                            <a class="btn btn-warning on-top" href="{{route('category.edit', $category->id)}}" role="button" style="border-radius: 0.25rem 0 0 0.25rem;">Edit</a>
+                            <button type="button" class="btn btn-danger on-top" data-toggle="modal" data-target="#deleteCategoryModal" data-title="{{$category->name}}" style="border-radius: 0 0.25rem 0.25rem 0;">Delete</button>
                         </div>
+                        @endcan
                     </div>
                 </div>
             </div>

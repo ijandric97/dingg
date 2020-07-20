@@ -20,6 +20,13 @@
     border-right: none;
 }
 
+.dingg-border {
+    border-top: 2px solid $orange !important;
+    border-left: none !important;
+    border-right: none !important;
+    border-bottom: 2px solid $success !important;
+}
+
 .fb-50 {
     filter: brightness(50%);
     transition: all 0.5s;

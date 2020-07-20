@@ -4,18 +4,16 @@
 <div class="container">
     <!-- Message for visitor -->
     @guest
-    <div class="border-top border-2 border-orange">
-        <div class="jumbotron border-bottom border-2 border-success">
-            <h1 class="display-4">Hello, stranger!</h1>
-            <p class="lead">Dingg is even better when you register!<br>
-                Place orders, rate and comment on your favourite restaurants.<br>
-                Dingg also offers a user-tailored restaurant recommendation system based on your past orders.<br>
-                <!--What are you waiting? become a part of Dingg community now.-->
-            </p>
-            <hr class="my-4">
-            <p>Registration is completely free of charge.</p>
-            <a class="btn btn-primary btn-lg" href="{{route('register')}}" role="button">Take me to registration</a>
-        </div>
+    <div class="jumbotron dingg-border">
+        <h1 class="display-4">Hello, stranger!</h1>
+        <p class="lead">Dingg is even better when you register!<br>
+            Place orders, rate and comment on your favourite restaurants.<br>
+            Dingg also offers a user-tailored restaurant recommendation system based on your past orders.<br>
+            <!--What are you waiting? become a part of Dingg community now.-->
+        </p>
+        <hr class="my-4">
+        <p>Registration is completely free of charge.</p>
+        <a class="btn btn-primary btn-lg" href="{{route('register')}}" role="button">Take me to registration</a>
     </div>
     @else
     <!-- User stuff then -->

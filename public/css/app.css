@@ -10940,6 +10940,13 @@ a.text-dark:focus {
   border-right: none;
 }
 
+.dingg-border {
+  border-top: 2px solid #f6993f !important;
+  border-left: none !important;
+  border-right: none !important;
+  border-bottom: 2px solid #38c172 !important;
+}
+
 .fb-50 {
   -webkit-filter: brightness(50%);
           filter: brightness(50%);
