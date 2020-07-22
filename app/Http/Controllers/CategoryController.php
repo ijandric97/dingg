@@ -11,15 +11,35 @@ use Illuminate\Support\Facades\File;
 class CategoryController extends Controller
 {
     /**
+     * Undocumented function
+     *
+     * @param \Illuminate\Http\Request  $request
+     * @return string
+     */
+    private function uploadImage($request)
+    {
+        // Create new Filename to store
+        $filenameWithExt = $request->file('file')->getClientOriginalName();
+        $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
+        $extension = $request->file('file')->getClientOriginalExtension();
+        $filenameToStore = $filename . '_' . time() . '.' . $extension;
+
+        // Resize and store the new file
+        $image_resize = Image::make($request->file('file')->getRealPath());
+        $image_resize->resize(320, 240);
+        $image_resize->save('storage/images/category/' . $filenameToStore);
+
+        return $filenameToStore;
+    }
+
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
     public function index()
     {
-        $categories = Category::orderBy('name', 'asc')->get(); // Case insensitive by default
-
-        return view('pages.category.index', ['categories' => $categories]);
+        return view('pages.category.index', ['categories' => Category::orderBy('name', 'asc')->get()]); // Case insensitive by default
     }
 
     /**
@@ -58,19 +78,8 @@ class CategoryController extends Controller
 
         // Handle File Upload
         if ($request->hasFile('file')) {
-            // Create new Filename to store
-            $filenameWithExt = $request->file('file')->getClientOriginalName();
-            $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
-            $extension = $request->file('file')->getClientOriginalExtension();
-            $filenameToStore = $filename . '_' . time() . '.' . $extension;
-
-            // Resize and store the new file
-            $image_resize = Image::make($request->file('file')->getRealPath());
-            $image_resize->resize(320, 240);
-            $image_resize->save('storage/images/category/' . $filenameToStore);
-
-            // Upate the image_path in the database
-            $category->image_path = $filenameToStore;
+            // Upload the image to database and update the image_path in the database
+            $category->image_path = $this->uploadImage($request);
         }
 
         $category->save();
@@ -86,11 +95,8 @@ class CategoryController extends Controller
      */
     public function show($id)
     {
-        $category = Category::find($id);
-
         //dd($category->restaurants);
-
-        return view('pages.category.show', ['category' => $category]);
+        return view('pages.category.show', ['category' => Category::find($id)]);
     }
 
     /**
@@ -103,9 +109,7 @@ class CategoryController extends Controller
     {
         $this->authorize('is-admin', auth()->user());
 
-        $category = Category::find($id);
-
-        return view('pages.category.edit', ['category' => $category]);
+        return view('pages.category.edit', ['category' => Category::find($id)]);
     }
 
     /**
@@ -121,6 +125,7 @@ class CategoryController extends Controller
 
         // Validate
         $category = Category::find($id);
+
         $request->validate([
             'name' => 'required|string|max:50|unique:categories,name,' . $category->id,
             'description' => 'required|string',
@@ -131,34 +136,13 @@ class CategoryController extends Controller
         $category->name = request('name');
         $category->description = request('description');
 
-        // Handle File Upload
-        if ($request->has('delete_image')) {
+        if ($request->has('delete_image') || $request->hasFile('file')) {
             // Delete the old file
             if ($category->image_path !== 'placeholder.png') {
                 File::delete('storage/images/category/' . $category->image_path);
             }
 
-            // Upate the image_path in the database
-            $category->image_path = 'placeholder.png';
-        } elseif ($request->hasFile('file')) {
-            // Create new Filename to store
-            $filenameWithExt = $request->file('file')->getClientOriginalName();
-            $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
-            $extension = $request->file('file')->getClientOriginalExtension();
-            $filenameToStore = $filename . '_' . time() . '.' . $extension;
-
-            // Resize and store the new file
-            $image_resize = Image::make($request->file('file')->getRealPath());
-            $image_resize->resize(320, 240);
-            $image_resize->save('storage/images/category/' . $filenameToStore);
-
-            // Delete the old file
-            if ($category->image_path !== 'placeholder.png') {
-                File::delete('storage/images/category/' . $category->image_path);
-            }
-
-            // Upate the image_path in the database
-            $category->image_path = $filenameToStore;
+            $request->has('delete_image') ? $category->image_path = 'placeholder.png' : $category->image_path = $this->uploadImage($request);
         }
 
         $category->save();
@@ -176,7 +160,6 @@ class CategoryController extends Controller
     {
         $this->authorize('is-admin', auth()->user());
 
-        // TODO: TEST THIS, possibly foreign key issues :) maybe detach or some shit?
         $category = Category::find($id);
         $category->restaurants()->detach(); // Remove the associations with this category in category_restaurant pivot table
         $category->delete();

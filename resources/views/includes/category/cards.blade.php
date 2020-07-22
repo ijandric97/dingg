@@ -6,4 +6,4 @@
     @endforelse
 </div>
 
-@include("includes.category.delete-modal") {{-- Delete Modal --}}
+@include('includes.category.delete-modal') {{-- Delete Modal --}}
