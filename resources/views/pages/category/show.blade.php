@@ -2,20 +2,18 @@
 
 @section('content')
 <div class="container">
-    <!-- Breadcrumb -->
-    <nav aria-label="breadcrumb">
+    {{-- Breadcrumb --}}
+    <nav>
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{{route('home')}}">Home</a></li>
             <li class="breadcrumb-item"><a href="{{route('category.index')}}">Categories</a></li>
-            <li class="breadcrumb-item active" aria-current="page">{{$category->name}}</li>
+            <li class="breadcrumb-item active">{{$category->name}}</li>
         </ol>
     </nav>
 
-    <!-- Title -->
-    <h1 class="d-inline-block mr-2 mb-3">{{$category->name}}</h1>
-    @include('includes.category.admin-edit-buttons')
-    <!-- Description -->
-    <p class="lead">{{$category->description}}</p>
+    <h1 class="d-inline-block mr-2 mb-3">{{$category->name}}</h1> {{-- Title --}}
+    @include('includes.category.edit-delete-button')              {{-- Edit / Delete --}}
+    <p class="lead">{{$category->description}}</p>                {{-- Description --}}
 
     <!-- Restaurants -->
     <div class="row justify-content-start" style="margin: 0px -3px;">
@@ -44,4 +42,4 @@
 </div>
 @endsection
 
-@include('includes.category-delete-modal')
+@include('includes.category.delete-modal')

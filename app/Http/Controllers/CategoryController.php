@@ -19,7 +19,7 @@ class CategoryController extends Controller
     {
         $categories = Category::orderBy('name', 'asc')->get(); // Case insensitive by default
 
-        return view('category.index', ['categories' => $categories]);
+        return view('pages.category.index', ['categories' => $categories]);
     }
 
     /**
@@ -31,7 +31,7 @@ class CategoryController extends Controller
     {
         $this->authorize('is-admin', auth()->user());
 
-        return view('category.create');
+        return view('pages.category.create');
     }
 
     /**
@@ -90,7 +90,7 @@ class CategoryController extends Controller
 
         //dd($category->restaurants);
 
-        return view('category.show', ['category' => $category]);
+        return view('pages.category.show', ['category' => $category]);
     }
 
     /**
@@ -105,7 +105,7 @@ class CategoryController extends Controller
 
         $category = Category::find($id);
 
-        return view('category.edit', ['category' => $category]);
+        return view('pages.category.edit', ['category' => $category]);
     }
 
     /**
