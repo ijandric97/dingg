@@ -12,7 +12,8 @@
     </nav>
 
     <!-- Title -->
-    <h1 class="">{{$category->name}}</h1>
+    <h1 class="d-inline-block mr-2 mb-3">{{$category->name}}</h1>
+    @include('includes.category.admin-edit-buttons')
     <!-- Description -->
     <p class="lead">{{$category->description}}</p>
 
@@ -41,4 +42,6 @@
         @endforelse
     </div>
 </div>
-@endsection	
+@endsection
+
+@include('includes.category-delete-modal')

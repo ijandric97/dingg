@@ -17,7 +17,7 @@ class CategorySeeder extends Seeder
 
         // The images will have to be copied into resources/images/category/ folder :)
         $categories =  [
-            ['name' => 'American', 'description' => 'The freshest fish on dry land.', 'image_path' => 'american.jpg'],
+            ['name' => 'American', 'description' => 'Never fear, we’ve got burgers and beer!', 'image_path' => 'american.jpg'],
             ['name' => 'Asian', 'description' => 'The freshest fish on dry land.', 'image_path' => 'asian.jpg'],
             ['name' => 'Bakery', 'description' => 'The freshest fish on dry land.', 'image_path' => 'bakery.jpg'],
             ['name' => 'BBQ', 'description' => 'The freshest fish on dry land.', 'image_path' => 'bbq.jpg'],
@@ -51,7 +51,7 @@ class CategorySeeder extends Seeder
         foreach ($categories as $category) {
             Category::create($category);
         }
-        
+
         // foreach... Category::create fails because create is Eloquent function that always expects a timestamp?
         // to fix this either put $timestamps = false; into the Category Model or do func specified below.
         // Category::insert($categories); //This works faster but is not Eloquent friendly
