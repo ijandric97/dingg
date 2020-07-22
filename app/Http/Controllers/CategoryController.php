@@ -84,7 +84,7 @@ class CategoryController extends Controller
 
         $category->save();
 
-        return redirect(route('category.index'))->with('status', 'Category created');
+        return redirect(route('category.index'))->with('success', 'Category created');
     }
 
     /**
@@ -147,7 +147,7 @@ class CategoryController extends Controller
 
         $category->save();
 
-        return redirect(route('category.index'))->with('status', 'Category edited');
+        return redirect(route('category.index'))->with('success', 'Category edited');
     }
 
     /**
@@ -164,6 +164,6 @@ class CategoryController extends Controller
         $category->restaurants()->detach(); // Remove the associations with this category in category_restaurant pivot table
         $category->delete();
 
-        return redirect(route('category.index'))->with('status', 'Category deleted');
+        return redirect(route('category.index'))->with('success', 'Category deleted');
     }
 }
