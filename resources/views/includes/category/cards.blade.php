@@ -1,4 +1,4 @@
-<div class="row justify-content-center mb-5" style="margin: 0px -3px;">
+<div class="row justify-content-start mb-5" style="margin: 0px -3px;">
     @forelse ($categories as $category)
         @include('includes.category.cards-item')
     @empty

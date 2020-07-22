@@ -178,6 +178,7 @@ class CategoryController extends Controller
 
         // TODO: TEST THIS, possibly foreign key issues :) maybe detach or some shit?
         $category = Category::find($id);
+        $category->restaurants()->detach(); // Remove the associations with this category in category_restaurant pivot table
         $category->delete();
 
         return redirect(route('category.index'))->with('status', 'Category deleted');
