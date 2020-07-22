@@ -18,8 +18,10 @@ class RestaurantSeeder extends Seeder
         //Restaurant::truncate();
 
         $restaurants = [
-            ['name' => 'Food City Hamby', 'description' => 'We are your burger buddy', 'address' => 'Ante Starčevića 11a',
-                'phone' => '+38551330653', 'website' => 'http://www.foodcity.hr/lokali.php#', 'owner_id' => 1, 'image_path' => 'american.jpg'],
+            [
+                'name' => 'Food City Hamby', 'description' => 'We are your burger buddy', 'address' => 'Ante Starčevića 11a',
+                'phone' => '+38551330653', 'website' => 'http://www.foodcity.hr/lokali.php#', 'owner_id' => 1, 'image_path' => 'american.jpg'
+            ],
         ];
 
         foreach ($restaurants as $restaurant) {

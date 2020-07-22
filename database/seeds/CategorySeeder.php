@@ -14,7 +14,6 @@ class CategorySeeder extends Seeder
     public function run()
     {
         //Category::truncate(); // Remove duplicates
-
         // The images will have to be copied into resources/images/category/ folder :)
         $categories =  [
             ['name' => 'American', 'description' => 'Never fear, we’ve got burgers and beer!', 'image_path' => 'american.jpg'],
@@ -45,8 +44,6 @@ class CategorySeeder extends Seeder
             ['name' => 'Vegan', 'description' => 'The freshest fish on dry land.', 'image_path' => 'vegan.jpg'],
             ['name' => 'Wings', 'description' => 'The freshest fish on dry land.', 'image_path' => 'wings.jpg'],
         ];
-
-        //DB::table('categories')->truncate();
 
         foreach ($categories as $category) {
             Category::create($category);

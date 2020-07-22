@@ -15,9 +15,16 @@ class DatabaseSeeder extends Seeder
         $this->call([
             UserSeeder::class,
             CategorySeeder::class,
-            RestaurantSeeder::class
+            RestaurantSeeder::class,
+            WorkhourSeeder::class,
+            TableSeeder::class,
+            CommentSeeder::class,
+            GroupSeeder::class,
+            ProductSeeder::class,
+            OrderSeeder::class
         ]);
 
+        // TODO: DO Many to many associations here or something :)
         $user = App\User::find(1);
         $restaurant = App\Restaurant::find(1);
         $restaurant->owner()->associate($user);
@@ -25,7 +32,7 @@ class DatabaseSeeder extends Seeder
         $category = App\Category::find(1);
         $restaurant = App\Restaurant::find(1);
         $restaurant->categories()->attach($category);
-        
+
         //dd($user->ownedRestaurants());
         //$user->ownedRestaurants()->add($restaurant); dpes not work
     }
