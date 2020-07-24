@@ -29,7 +29,8 @@
     @include('includes.category.cards')                  {{-- 3 Random Categories --}}
 
     {{-- TODO: Create actual all restaurants list? --}}
-    <h1 class="d-inline mr-2">Restaurants</h1> {{-- Restaurants Title --}}
-    <a class="btn btn-outline-primary mb-3" href="{{route('category.index')}}" role="button">View all</a>
+    <h1 class="d-inline-block mr-2 mb-3">Restaurants</h1> {{-- Restaurants Title --}}
+    @include('includes.restaurant.create-viewall-button') {{-- Create / View All --}}
+    @include('includes.restaurant.cards')                 {{-- 3 Random Restaurants --}}
 </div>
 @endsection

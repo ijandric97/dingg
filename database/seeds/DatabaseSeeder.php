@@ -33,6 +33,10 @@ class DatabaseSeeder extends Seeder
         $restaurant = App\Restaurant::find(1);
         $restaurant->categories()->attach($category);
 
+        $workhour = App\Workhour::find(1);
+        $restaurant = App\Restaurant::find(1);
+        $workhour->restaurant()->associate($workhour);
+
         //dd($user->ownedRestaurants());
         //$user->ownedRestaurants()->add($restaurant); dpes not work
     }

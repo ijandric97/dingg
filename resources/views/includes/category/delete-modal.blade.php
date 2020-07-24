@@ -22,7 +22,7 @@
 </div>
 
 
-@section('scripts')
+@push('scripts')
 <script>
     $('#CategoryDeleteModal').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget)
@@ -34,5 +34,5 @@
         modal.find('.btn-danger').text('Delete ' + categoryName + ' ✔')
     })
 </script>
-@endsection
+@endpush
 @endcan

@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Restaurant;
 use Illuminate\Http\Request;
+use Intervention\Image\ImageManagerStatic as Image;
+use Illuminate\Support\Facades\File;
 
 class RestaurantController extends Controller
 {
@@ -37,7 +40,6 @@ class RestaurantController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    // OVO SE ZOVE IZ CREATEA ZNACI CREATE VRATI VIEW S FORMOM, A FORM SUBMIT ZOVE OVAJ VRAG :)
     public function store(Request $request)
     {
         //
@@ -62,7 +64,27 @@ class RestaurantController extends Controller
      */
     public function edit($id)
     {
-        //
+        $restaurant = Restaurant::find($id);
+
+        $this->authorize('edit-restaurant', $restaurant);
+
+        $workhours_temp = $restaurant->workhours()->orderBy('day_of_week', 'asc')->get();
+
+        $workhours = [
+            ['open_time' => '', 'close_time' => ''],
+            ['open_time' => '', 'close_time' => ''],
+            ['open_time' => '', 'close_time' => ''],
+            ['open_time' => '', 'close_time' => ''],
+            ['open_time' => '', 'close_time' => ''],
+            ['open_time' => '', 'close_time' => ''],
+            ['open_time' => '', 'close_time' => ''],
+        ];
+
+        foreach ($workhours_temp as $wh_tmp) {
+            $workhours[$wh_tmp->day_of_week] = ['open_time' => $wh_tmp->open_time, 'close_time' => $wh_tmp->close_time];
+        }
+
+        return view('pages.restaurant.edit', ['restaurant' => $restaurant, 'workhours' => $workhours]);
     }
 
     /**
@@ -72,10 +94,9 @@ class RestaurantController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    // Isti kurac kao store, samo je ovo form action za view koji edit baci
     public function update(Request $request, $id)
     {
-        //
+        dd($request);
     }
 
     /**

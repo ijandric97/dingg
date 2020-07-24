@@ -12,6 +12,6 @@
         </main>
         @include('includes.footer')
     </div>
-    @yield('scripts')
+    @stack('scripts')
 </body>
 </html>

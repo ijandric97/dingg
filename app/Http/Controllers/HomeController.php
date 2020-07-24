@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Category;
+use App\Restaurant;
 
 class HomeController extends Controller
 {
@@ -24,6 +25,9 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home', ['categories' => Category::inRandomOrder()->limit(3)->get()]);
+        return view('home', [
+            'categories' => Category::inRandomOrder()->limit(3)->get(),
+            'restaurants' => Restaurant::inRandomOrder()->limit(3)->get()
+        ]);
     }
 }
