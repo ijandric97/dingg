@@ -7,7 +7,7 @@
             <span class="badge badge-primary">{{$category->count}} Restaurants</span>
             <a href="{{route('category.show', $category->id)}}" class="stretched-link"></a>
 
-            @can('is-admin', Auth::user())
+            @can('is-admin') {{-- Only admin can edit and delete categories --}}
             <div class="mt-2 d-flex">
                 @include('includes.category.edit-delete-button') {{-- Edit / Delete --}}
             </div>

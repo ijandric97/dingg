@@ -1,4 +1,4 @@
-@can('is-admin', Auth::user())
+@can('is-admin') {{-- Display message if we are in Admin Mode--}}
 <div class="bg-dark text-danger text-center" role="alert">
     ADMINISTRATOR MODE - BE CAREFUL!
 </div>

@@ -1,4 +1,4 @@
-@can('is-admin', Auth::user())
+@can('is-admin') {{-- Only admin can delete categories --}}
 <div class="modal fade" id="CategoryDeleteModal" tabindex="-1" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">

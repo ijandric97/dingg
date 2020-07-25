@@ -66,7 +66,9 @@ class RestaurantController extends Controller
     {
         $restaurant = Restaurant::find($id);
 
-        $this->authorize('edit-restaurant', $restaurant);
+        //dd($restaurant->categories()->get());
+
+        $this->authorize('edit-restaurant', $restaurant); // $user is automatically passed
 
         $workhours_temp = $restaurant->workhours()->orderBy('day_of_week', 'asc')->get();
 

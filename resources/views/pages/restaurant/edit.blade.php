@@ -56,9 +56,27 @@
                 <small class="form-text text-danger">{{$message}}</small>
             @enderror
         </div>
+        <div class="form-group"> {{-- Categories --}}
+            <label for="categories">Categories</label>
+            {{-- Define days array so we can elegantly for loop this section --}}
+            <div class="table-responsive">
+                <table class="table table-striped border">
+                    <thead>
+                        <tr>
+                            <th scope="col">Day</th>
+                            <th scope="col">Start</th>
+                            <th scope="col">End</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+                <small class="form-text text-muted">NOTE: Delete time if you are closed that day.</small>
+            </div>
+        </div>
         <div class="form-group"> {{-- Workhours --}}
             <label for="workhours">Workhours</label>
-
+            {{-- Define days array so we can elegantly for loop this section --}}
             @php ($days = [0 => 'Monday', 1 => 'Tuesday', 2 => 'Wednesday', 3 => 'Thursday', 4 => 'Friday', 5 => 'Saturday', 6 => 'Sunday'])
             <div class="table-responsive">
                 <table class="table table-striped border">

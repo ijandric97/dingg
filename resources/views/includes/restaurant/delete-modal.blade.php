@@ -1,4 +1,4 @@
-@can('is-admin', Auth::user())
+@can('is-admin') {{-- Only Admin can delete restaurant --}}
 <div class="modal fade" id="RestaurantDeleteModal" tabindex="-1" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">

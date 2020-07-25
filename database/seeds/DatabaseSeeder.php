@@ -29,8 +29,13 @@ class DatabaseSeeder extends Seeder
         $restaurant = App\Restaurant::find(1);
         $restaurant->owner()->associate($user);
 
-        $category = App\Category::find(1);
+
         $restaurant = App\Restaurant::find(1);
+        $category = App\Category::find(1);
+        $restaurant->categories()->attach($category);
+        $category = App\Category::find(2);
+        $restaurant->categories()->attach($category);
+        $category = App\Category::find(3);
         $restaurant->categories()->attach($category);
 
         $workhour = App\Workhour::find(1);

@@ -7,7 +7,7 @@
             {{--<span class="badge badge-primary">{{$restaurant->count}} Restaurants</span>--}}
             <a href="{{route('restaurant.show', $restaurant->id)}}" class="stretched-link"></a>
 
-            @can('is-admin', Auth::user())
+            @can('edit-restaurant', $restaurant)
             <div class="mt-2 d-flex">
                 @include('includes.restaurant.edit-delete-button') {{-- Edit / Delete --}}
             </div>
