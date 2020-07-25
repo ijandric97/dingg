@@ -23,6 +23,7 @@ class CreateRestaurantsTable extends Migration
             $table->string('website');
             $table->string('image_path');
             $table->foreignId('owner_id')->constrained('users');
+            $table->boolean('deleted'); // WE DONT DELETE, WE SET AS CLOSED
         });
     }
 

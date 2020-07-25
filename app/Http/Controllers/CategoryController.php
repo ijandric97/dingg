@@ -95,7 +95,7 @@ class CategoryController extends Controller
     public function show($id)
     {
         //dd($category->restaurants);
-        return view('pages.category.show', ['category' => Category::find($id)]);
+        return view('pages.category.show', ['category' => Category::findOrFail($id)]);
     }
 
     /**
@@ -108,7 +108,7 @@ class CategoryController extends Controller
     {
         $this->authorize('is-admin', auth()->user());
 
-        return view('pages.category.edit', ['category' => Category::find($id)]);
+        return view('pages.category.edit', ['category' => Category::findOrFail($id)]);
     }
 
     /**
@@ -123,7 +123,7 @@ class CategoryController extends Controller
         $this->authorize('is-admin', auth()->user()); // Not even sure if we need this, but i will leave it
 
         // Validate
-        $category = Category::find($id);
+        $category = Category::findOrFail($id);
 
         $request->validate([
             'name' => 'required|string|max:50|unique:categories,name,' . $category->id,
@@ -159,7 +159,7 @@ class CategoryController extends Controller
     {
         $this->authorize('is-admin', auth()->user());
 
-        $category = Category::find($id);
+        $category = Category::findOrFail($id);
         $category->restaurants()->detach(); // Remove the associations with this category in category_restaurant pivot table
         $category->delete();
 

@@ -63,12 +63,28 @@
                 <table class="table table-striped border">
                     <thead>
                         <tr>
-                            <th scope="col">Day</th>
-                            <th scope="col">Start</th>
-                            <th scope="col">End</th>
+                            <th scope="col">Category 1</th>
+                            <th scope="col">Category 2</th>
+                            <th scope="col">Category 3</th>
                         </tr>
                     </thead>
                     <tbody>
+                        <tr>
+                            @for ($i = 0; $i < 3; $i++)
+                                <td>
+                                    <select name="category_{{$i}}" class="custom-select">
+                                        <option value=""></option>
+                                        {{"selected"}}></option> {{-- Default blank --}}
+                                        @foreach ($categories as $category)
+                                            <option value="{{$category->id}}" @if(old('category_'.$i, $rest_cats[$i]['name']) == $category->name){{"selected"}}@endif>{{$category->name}}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('category_'.$i)
+                                        <small class="form-text text-danger">{{$message}}</small>
+                                    @enderror
+                                </td>
+                            @endfor
+                        </tr>
                     </tbody>
                 </table>
                 <small class="form-text text-muted">NOTE: Delete time if you are closed that day.</small>

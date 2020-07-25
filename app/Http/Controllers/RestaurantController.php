@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Restaurant;
 use Illuminate\Http\Request;
 use Intervention\Image\ImageManagerStatic as Image;
 use Illuminate\Support\Facades\File;
+
+use App\Restaurant;
+use App\Category;
 
 class RestaurantController extends Controller
 {
@@ -53,7 +55,7 @@ class RestaurantController extends Controller
      */
     public function show($id)
     {
-        //
+        return view('pages.restaurant.show', ['restaurant' => Restaurant::findOrFail($id)]);
     }
 
     /**
@@ -64,29 +66,19 @@ class RestaurantController extends Controller
      */
     public function edit($id)
     {
-        $restaurant = Restaurant::find($id);
-
-        //dd($restaurant->categories()->get());
+        $restaurant = Restaurant::findOrFail($id);
 
         $this->authorize('edit-restaurant', $restaurant); // $user is automatically passed
 
-        $workhours_temp = $restaurant->workhours()->orderBy('day_of_week', 'asc')->get();
+        //dd($restaurant->categories()->get());
+        // Prepare categories
+        $categories = Category::orderBy('name', 'asc')->get();
 
-        $workhours = [
-            ['open_time' => '', 'close_time' => ''],
-            ['open_time' => '', 'close_time' => ''],
-            ['open_time' => '', 'close_time' => ''],
-            ['open_time' => '', 'close_time' => ''],
-            ['open_time' => '', 'close_time' => ''],
-            ['open_time' => '', 'close_time' => ''],
-            ['open_time' => '', 'close_time' => ''],
-        ];
+        // Prepare workhours
+        $workhours = $restaurant->getWorkhoursTable();
+        $rest_cats = $restaurant->getCategoriesNameTable(); // Our selected categories
 
-        foreach ($workhours_temp as $wh_tmp) {
-            $workhours[$wh_tmp->day_of_week] = ['open_time' => $wh_tmp->open_time, 'close_time' => $wh_tmp->close_time];
-        }
-
-        return view('pages.restaurant.edit', ['restaurant' => $restaurant, 'workhours' => $workhours]);
+        return view('pages.restaurant.edit', ['restaurant' => $restaurant, 'categories' => $categories, 'rest_cats' => $rest_cats, 'workhours' => $workhours]);
     }
 
     /**
@@ -99,6 +91,19 @@ class RestaurantController extends Controller
     public function update(Request $request, $id)
     {
         dd($request);
+
+        $restaurant = Restaurant::findOrFail($id);
+
+        $this->authorize('edit-restaurant', $restaurant); // $user is automatically passed
+
+        // we should detach all categories, then attach the selected ones :)
+
+        // Validate
+        $request->validate([
+            'name' => 'required|string|max:50|unique:categories,name',
+            'description' => 'required|string',
+            'file' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // 2MB FILE SIZE LIMIT
+        ]);
     }
 
     /**

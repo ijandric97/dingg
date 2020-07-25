@@ -20,11 +20,13 @@ class RestaurantSeeder extends Seeder
         $restaurants = [
             [
                 'name' => 'Food City Hamby', 'description' => 'We are your burger buddy', 'address' => 'Ante Starčevića 11a',
-                'phone' => '+385 51 330653', 'website' => 'http://www.foodcity.hr/lokali.php#', 'owner_id' => 1, 'image_path' => 'american.jpg'
+                'phone' => '+385 51 330653', 'website' => 'http://www.foodcity.hr/lokali.php#', 'owner_id' => 1, 'image_path' => 'american.jpg',
+                'deleted' => false
             ],
             [
                 'name' => 'test', 'description' => 'test', 'address' => 'test',
-                'phone' => '+385 51 330653', 'website' => 'http://www.example.com', 'owner_id' => 1, 'image_path' => 'placeholder.png'
+                'phone' => '+385 51 330653', 'website' => 'http://www.example.com', 'owner_id' => 1, 'image_path' => 'placeholder.png',
+                'deleted' => true
             ],
         ];
 
