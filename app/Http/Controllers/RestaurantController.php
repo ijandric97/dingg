@@ -55,7 +55,10 @@ class RestaurantController extends Controller
      */
     public function show($id)
     {
-        return view('pages.restaurant.show', ['restaurant' => Restaurant::findOrFail($id)]);
+        $restaurant = Restaurant::findOrFail($id);
+        $workhours = $restaurant->getWorkhoursTable();
+
+        return view('pages.restaurant.show', ['restaurant' => $restaurant, 'workhours' => $workhours]);
     }
 
     /**

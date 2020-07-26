@@ -13,7 +13,8 @@
 
     <div class="row mb-2"> {{-- Basic Info --}}
         <div class="col-md-4 mb-3">
-            <img src="{{asset('storage/images/restaurant/' . $restaurant->image_path)}}" onerror="this.onerror=null; this.src='{{asset('storage/images/restaurant/placeholder.png')}}'" class="d-block m-auto m-md-0 img-fluid dingg-border rounded" alt="{{$restaurant->name}} picture">
+            <img src="{{asset('storage/images/restaurant/' . $restaurant->image_path)}}" onerror="this.onerror=null; this.src='{{asset('storage/images/restaurant/placeholder.png')}}'" class="d-block m-auto w-100 img-fluid dingg-border rounded" alt="{{$restaurant->name}} picture">
+            <a href="#" class="btn btn-info btn-lg d-block mx-auto mt-2">Create an order 🍕</a> {{-- Order Button --}}
         </div>
         <div class="col-md-8 text-center text-md-left">
             <h1 class="d-inline-block mr-2 mb-2">{{$restaurant->name}}</h1> {{-- Title --}}
@@ -50,14 +51,25 @@
                     </tr>
                 </tbody>
             </table>
+            <div class="alert alert-primary" role="alert">
+                If you have allergies or other dietary restrictions, please contact the restaurant.<br/>
+                The restaurant will provide food-specific information upon request.
+            </div>
         </div>
     </div>
 
-    {{-- Order button --}}
-    <div class="px-5">
-        <a href="#" class="btn btn-light text-dark btn-block dingg-border btn-lg">Order 🍑🍆</a>
-    </div>
-
+    {{-- Define days array so we can elegantly for loop this section --}}
+    @php ($days = [0 => 'Monday', 1 => 'Tuesday', 2 => 'Wednesday', 3 => 'Thursday', 4 => 'Friday', 5 => 'Saturday', 6 => 'Sunday'])
+    <table class="table table-sm">
+        <tbody>
+            @for ($i = 0; $i < 7; $i++)
+            <tr>
+                <th scope="row">{{$days[$i]}}</th>
+                <td>{{$workhours[$i]['open_time']}} - {{$workhours[$i]['open_time']}}</td>
+            </tr>
+            @endfor
+        </tbody>
+    </table>
 
 
 </div>
