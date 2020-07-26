@@ -33,7 +33,11 @@
             </div>
 
             <div class="d-inline-block mb-3"> {{-- Rating / Favorite --}}
-                <button class="btn btn-danger font-weight-bold disabled" style="opacity: 1; vertical-align: super;">{{'⭐  4.6'}} / 5</button>
+                @php
+                    $rating = $restaurant->rating();
+                    $color = $rating >= 4 ? 'btn-success' : ($rating < 2.5 ? 'btn-danger' : 'btn-warning');
+                @endphp
+                <button class="btn {{$color}} font-weight-bold disabled" style="opacity: 1; vertical-align: super;">{{'⭐ '.$rating}} / 5</button>
                 @include('includes.restaurant.favorite-button')
             </div>
 
@@ -62,19 +66,89 @@
 
     {{-- Define days array so we can elegantly for loop this section --}}
     @php ($days = [0 => 'Monday', 1 => 'Tuesday', 2 => 'Wednesday', 3 => 'Thursday', 4 => 'Friday', 5 => 'Saturday', 6 => 'Sunday'])
-    <table class="table table-sm">
-        <tbody>
-            @for ($i = 0; $i < 7; $i++)
-            <tr>
-                <th scope="row">{{$days[$i]}}</th>
-                <td>{{$workhours[$i]['open_time']}} - {{$workhours[$i]['open_time']}}</td>
-            </tr>
-            @endfor
-        </tbody>
-    </table>
+    <div class="row mb-2"> {{-- Basic Info --}}
+        <div class="col-md-4 mb-3">
+            <h3>Workhours</h3>
+            <table class="table table-sm">
+                <tbody>
+                    @for ($i = 0; $i < 7; $i++)
+                    <tr>
+                        <th scope="row">{{$days[$i]}}</th>
+                        <td>{{$workhours[$i]['open_time']}} - {{$workhours[$i]['close_time']}}</td>
+                    </tr>
+                    @endfor
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-8">
+            <h3 class="d-inline-block mr-2 mb-2">Comments<button id="addCommentBtn" class="ml-2 btn btn-success" onClick="toggleCommentForm()" role="button">✎ Add</button></h3>
+            <form id="addCommentForm" method="POST" action="{{route('restaurant.add_comment', $restaurant->id)}}" style="display: none;"> {{-- Add comment form --}}
+                @csrf
+                <div class="card mb-2">
+                    <div class="card-header">
+                        <div class="form-group"> {{-- Title --}}
+                            <label for="name">Title</label>
+                            <input type="text" class="form-control @error('name') is-invalid @enderror" placeholder="Title of your comment" name="title" value="{{old('title')}}" required>
+                            @error('name')
+                                <small class="form-text text-danger">{{$message}}</small>
+                            @enderror
+                        </div>
+                        <div class="form-group"> {{-- Body --}}
+                            <label for="exampleFormControlTextarea1">Body</label>
+                            <textarea class="form-control" name="body" placeholder="Type your experience here." rows="3"></textarea>
+                        </div>
+                        <div class="form-group"> {{-- Rating --}}
+                            <label for="addCommentRange" id="addCommentRangeLabel">Rating</label>
+                            <input type="range" class="form-control-range bg-warning" name="rating" id="addCommentRange" min="1" max="5" value="{{old('rating')}}" step="1" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">✉ Submit</button>
+                    </div>
+                </div>
+            </form>
+
+            @forelse ($comments as $comment) {{-- Existing comments --}}
+                <div class="card mb-2">
+                    <div class="card-body">
+                        <img src="{{asset('storage/images/restaurant/' . $restaurant->image_path)}}" alt="..." width=64 height=64 class="d-inline-block mb-2 mr-2 img-thumbnail">
+                        <div class="d-inline-block" style="vertical-align: middle;">
+                            <h5 class="card-title">{{str_repeat('⭐', $comment->rating)}} {{$comment->title}}</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">by {{$comment->user()->get()[0]->name}} at {{$comment->updated_at}}</h6>
+                        </div>
+                        <p class="card-text">{{$comment->body}}</p>
+                        @can('delete-comment', $comment)
+                            <form method="POST" action="{{route('restaurant.delete_comment', [$restaurant->id, $comment->id])}}"> {{-- Add comment form --}}
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-danger">Delete 🗑</button> {{-- Delete comment Button --}}
+                            </form>
+                        @endcan
+                    </div>
+                </div>
+            @empty
+                <div class="alert alert-danger" role="alert">No comments found! Feel free to break the ice 🤠.</div>
+            @endforelse
+            {{$comments->links()}}
+        </div>
+    </div>
 
 
 </div>
 @include('includes.category.delete-modal')
 @endsection
 
+@push('scripts')
+<script>
+    var range = document.getElementById("addCommentRange");
+    var label = document.getElementById("addCommentRangeLabel");
+    label.innerHTML = "Rating: " + "⭐".repeat(range.value);
+
+    range.oninput = function() {
+        label.innerHTML = "Rating: " + "⭐".repeat(range.value);
+    }
+
+    function toggleCommentForm() {
+        document.getElementById("addCommentForm").style.display = "block";
+        document.getElementById("addCommentBtn").style.display = "none";
+    }
+</script>
+@endpush

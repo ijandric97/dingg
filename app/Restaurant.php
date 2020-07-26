@@ -95,6 +95,11 @@ class Restaurant extends Model
         return $this->hasMany('App\Comment');
     }
 
+    public function rating()
+    {
+        return round($this->comments()->avg('rating'), 1);
+    }
+
     public function favorites()
     {
         return $this->belongsToMany('App\User', 'favorites');

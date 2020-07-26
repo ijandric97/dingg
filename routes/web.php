@@ -23,4 +23,6 @@ Route::get('/admin', 'AdminController@index')->name('admin.index');
 Route::resource('category', 'CategoryController');
 
 Route::get('/restaurant/{id}/favorite', 'RestaurantController@favorite')->name('restaurant.favorite');
+Route::post('/restaurant/{id}/comment/add', 'RestaurantController@addComment')->name('restaurant.add_comment');
+Route::delete('/restaurant/{id}/comment/delete/{c_id}', 'RestaurantController@deleteComment')->name('restaurant.delete_comment');
 Route::resource('restaurant', 'RestaurantController');

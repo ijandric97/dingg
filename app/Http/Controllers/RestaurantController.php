@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Intervention\Image\ImageManagerStatic as Image;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Auth;
 
 use App\Restaurant;
 use App\Category;
+use App\Comment;
 
 class RestaurantController extends Controller
 {
@@ -58,8 +60,9 @@ class RestaurantController extends Controller
     {
         $restaurant = Restaurant::findOrFail($id);
         $workhours = $restaurant->getWorkhoursTable();
+        $comments = $restaurant->comments()->orderBy('updated_at', 'desc')->paginate(5);
 
-        return view('pages.restaurant.show', ['restaurant' => $restaurant, 'workhours' => $workhours]);
+        return view('pages.restaurant.show', ['restaurant' => $restaurant, 'workhours' => $workhours, 'comments' => $comments]);
     }
 
     /**
@@ -143,5 +146,42 @@ class RestaurantController extends Controller
         }
 
         return redirect(route('restaurant.show', $id));
+    }
+
+    public function addComment(Request $request, $id)
+    {
+        if (!Auth::check()) {
+            abort(403);
+        }
+
+        // Validate
+        $request->validate([
+            'title' => 'required|string|max:250',
+            'body' => 'required|string',
+            'rating' => 'required|numeric|min:1|max:5',
+        ]);
+
+        $comment = new Comment();
+
+        $comment->title = request('title');
+        $comment->body = request('body');
+        $comment->rating = request('rating');
+        $comment->user_id = Auth::user()->id;
+        $comment->restaurant_id = Restaurant::findOrFail($id)->id;
+
+        $comment->save();
+
+        return redirect(route('restaurant.show', $id));
+    }
+
+    public function deleteComment(Request $request, $restaurant_id, $comment_id)
+    {
+        $comment = Comment::findOrFail($comment_id);
+
+        $this->authorize('delete-comment', $comment);
+
+        $comment->delete();
+
+        return redirect(route('restaurant.show', $restaurant_id));
     }
 }

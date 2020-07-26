@@ -6,6 +6,7 @@ use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvid
 use Illuminate\Support\Facades\Gate;
 
 use App\Restaurant;
+use App\Comment as Comment;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -38,6 +39,10 @@ class AuthServiceProvider extends ServiceProvider
         // you should do $this->authorize('is-admin', $restaurant);
         Gate::define('edit-restaurant', function ($user, Restaurant $restaurant) {
             return $user->role === 'admin' or $user->id == $restaurant->owner_id;
+        });
+
+        Gate::define('delete-comment', function($user, Comment $comment) {
+            return $user->role === 'admin' or $user->id == $comment->user()->get()[0]->id;
         });
     }
 }

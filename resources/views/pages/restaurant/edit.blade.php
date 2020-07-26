@@ -114,7 +114,7 @@
                                 @enderror
                             </td>
                             <td>
-                                <input type="time" class="form-control @error('wh_end.'.$i) is-invalid @enderror" name="wh_end[]" value="{{old('wh_end.'.$i, $workhours[$i]['open_time'])}}">
+                                <input type="time" class="form-control @error('wh_end.'.$i) is-invalid @enderror" name="wh_end[]" value="{{old('wh_end.'.$i, $workhours[$i]['close_time'])}}">
                                 @error('wh_end.'.$i)
                                     <small class="form-text text-danger">{{$message}}</small>
                                 @enderror
