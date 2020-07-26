@@ -94,4 +94,9 @@ class Restaurant extends Model
     {
         return $this->hasMany('App\Comment');
     }
+
+    public function favorites()
+    {
+        return $this->belongsToMany('App\User', 'favorites');
+    }
 }

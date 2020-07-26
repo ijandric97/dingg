@@ -21,4 +21,6 @@ Route::get('/admin', 'AdminController@index')->name('admin.index');
 //Route::get('/admin/category', 'AdminController@category')->name('admin.category');
 
 Route::resource('category', 'CategoryController');
+
+Route::get('/restaurant/{id}/favorite', 'RestaurantController@favorite')->name('restaurant.favorite');
 Route::resource('restaurant', 'RestaurantController');

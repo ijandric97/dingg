@@ -14,7 +14,11 @@
     <div class="row mb-2"> {{-- Basic Info --}}
         <div class="col-md-4 mb-3">
             <img src="{{asset('storage/images/restaurant/' . $restaurant->image_path)}}" onerror="this.onerror=null; this.src='{{asset('storage/images/restaurant/placeholder.png')}}'" class="d-block m-auto w-100 img-fluid dingg-border rounded" alt="{{$restaurant->name}} picture">
-            <a href="#" class="btn btn-info btn-lg d-block mx-auto mt-2">Create an order 🍕</a> {{-- Order Button --}}
+            @auth
+                <a href="#" class="btn btn-info btn-lg d-block mx-auto mt-2">Create an order 🍕</a> {{-- Order Button --}}
+            @else
+                <a href="{{route('register')}}" class="btn btn-secondary btn-lg d-block mx-auto mt-2">Register to order 😊</a>
+            @endauth
         </div>
         <div class="col-md-8 text-center text-md-left">
             <h1 class="d-inline-block mr-2 mb-2">{{$restaurant->name}}</h1> {{-- Title --}}
@@ -30,9 +34,7 @@
 
             <div class="d-inline-block mb-3"> {{-- Rating / Favorite --}}
                 <button class="btn btn-danger font-weight-bold disabled" style="opacity: 1; vertical-align: super;">{{'⭐  4.6'}} / 5</button>
-                <form class="d-inline-block">
-                    <button type="submit" style="vertical-align: super;" class="btn btn-outline-success">Favorite ❤️</button>
-                </form>
+                @include('includes.restaurant.favorite-button')
             </div>
 
             <table class="table table-sm"> {{-- Info --}}

@@ -51,4 +51,16 @@ class User extends Authenticatable
     {
         return $this->hasMany('App\Comment');
     }
+
+    public function favorites()
+    {
+        return $this->belongsToMany('App\Restaurant', 'favorites');
+    }
+
+    public function toggleFavorite(Restaurant $restaurant)
+    {
+        $this->favorites()->where('restaurant_id', $restaurant->id)->first() ?
+        $this->favorites()->detach($restaurant) :
+        $this->favorites()->attach($restaurant);
+    }
 }

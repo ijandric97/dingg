@@ -18,6 +18,7 @@ class RestaurantController extends Controller
      */
     public function index()
     {
+
         /*$categories = Category::all();
         foreach ($categories as $category) {
             # TODO -> some kind of join on restaurants to get how many restaurants ar ein category just like in wolt...
@@ -127,5 +128,20 @@ class RestaurantController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function favorite($id)
+    {
+        // We dont need to authorize, this will simply do nothing for the non-user and return him
+        // to restaurant.show
+        $restaurant = Restaurant::findOrFail($id);
+
+        $user = auth()->user();
+
+        if ($user) {
+            $user->toggleFavorite($restaurant);
+        }
+
+        return redirect(route('restaurant.show', $id));
     }
 }
