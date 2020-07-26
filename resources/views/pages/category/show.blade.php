@@ -19,7 +19,7 @@
     <div class="row justify-content-start" style="margin: 0px -3px;">
         @forelse ($category->restaurants as $restaurant)
             <div class="col-md-4 col-sm-6 p-0">
-                <div class="card card-hover-blur bg-dark text-white border-0 m-1">
+                <div class="card card-hover-blur bg-gradient-dark text-white border-0 m-1">
                     <div class="border-top border-2 border-orange">
                         <img src="{{asset('storage/images/category/' . $category->image_path)}}" class="card-img-top fb-50" alt="...">
                         <div class="card-img-overlay border-bottom border-2 border-success">
@@ -40,6 +40,5 @@
         @endforelse
     </div>
 </div>
-@endsection
-
 @include('includes.category.delete-modal')
+@endsection

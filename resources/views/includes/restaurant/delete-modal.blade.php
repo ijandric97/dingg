@@ -2,7 +2,7 @@
 <div class="modal fade" id="RestaurantDeleteModal" tabindex="-1" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header bg-danger text-white" style="margin-left: -1px;">
+            <div class="modal-header bg-gradient-danger text-white">
                 <h5 class="modal-title">Delete Restaurant?</h5>
                 <button type="button" class="close" data-dismiss="modal">✖</button>
             </div>

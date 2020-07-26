@@ -72,14 +72,14 @@
                         <tr>
                             @for ($i = 0; $i < 3; $i++)
                                 <td>
-                                    <select name="category_{{$i}}" class="custom-select">
+                                    <select name="category[]" class="custom-select">
                                         <option value=""></option>
                                         {{"selected"}}></option> {{-- Default blank --}}
                                         @foreach ($categories as $category)
-                                            <option value="{{$category->id}}" @if(old('category_'.$i, $rest_cats[$i]['name']) == $category->name){{"selected"}}@endif>{{$category->name}}</option>
+                                            <option value="{{$category->name}}" @if(old('category.'.$i, $rest_cats[$i]['name']) == $category->name){{"selected"}}@endif>{{$category->name}}</option>
                                         @endforeach
                                     </select>
-                                    @error('category_'.$i)
+                                    @error('category.'.$i)
                                         <small class="form-text text-danger">{{$message}}</small>
                                     @enderror
                                 </td>
@@ -108,14 +108,14 @@
                         <tr>
                             <td>{{$days[$i]}}</td>
                             <td>
-                                <input type="time" class="form-control @error('wh'.$i.'_start') is-invalid @enderror" name="wh{{$i}}_start" id="wh{{$i}}_start" value="{{old('wh'.$i.'_start', $workhours[$i]['open_time'])}}">
-                                @error('wh'.$i.'_start')
+                                <input type="time" class="form-control @error('wh_start.'.$i) is-invalid @enderror" name="wh_start[]" value="{{old('wh_start.'.$i, $workhours[$i]['open_time'])}}">
+                                @error('wh_start.'.$i)
                                     <small class="form-text text-danger">{{$message}}</small>
                                 @enderror
                             </td>
                             <td>
-                                <input type="time" class="form-control @error('wh'.$i.'_end') is-invalid @enderror" name="wh{{$i}}_end" id="wh{{$i}}_end" value="{{old('wh'.$i.'_end', $workhours[$i]['open_time'])}}">
-                                @error('wh'.$i.'_end')
+                                <input type="time" class="form-control @error('wh_end.'.$i) is-invalid @enderror" name="wh_end[]" value="{{old('wh_end.'.$i, $workhours[$i]['open_time'])}}">
+                                @error('wh_end.'.$i)
                                     <small class="form-text text-danger">{{$message}}</small>
                                 @enderror
                             </td>

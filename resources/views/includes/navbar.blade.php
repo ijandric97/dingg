@@ -1,9 +1,9 @@
 @can('is-admin') {{-- Display message if we are in Admin Mode--}}
-<div class="bg-dark text-danger text-center" role="alert">
+<div class="bg-gradient-dark text-danger text-center" role="alert">
     ADMINISTRATOR MODE - BE CAREFUL!
 </div>
 @endcan
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary border-bottom border-2 border-orange">
+<nav class="navbar navbar-expand-lg navbar-dark bg-gradient-primary border-bottom border-2 border-orange">
     <div class="container">
         <!-- Dingg "logo" -->
         <a class="navbar-brand font-weight-bold" href="{{ route("home") }}">

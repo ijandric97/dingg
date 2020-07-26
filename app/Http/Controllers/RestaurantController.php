@@ -23,7 +23,7 @@ class RestaurantController extends Controller
             # TODO -> some kind of join on restaurants to get how many restaurants ar ein category just like in wolt...
         }*/
 
-        return view('restaurant.index', ['categories' => null]);
+        return view('pages.restaurant.index', ['categories' => null]);
     }
 
     /**
@@ -90,20 +90,29 @@ class RestaurantController extends Controller
      */
     public function update(Request $request, $id)
     {
-        dd($request);
+        //dd($request);
 
         $restaurant = Restaurant::findOrFail($id);
 
         $this->authorize('edit-restaurant', $restaurant); // $user is automatically passed
 
-        // we should detach all categories, then attach the selected ones :)
-
         // Validate
         $request->validate([
             'name' => 'required|string|max:50|unique:categories,name',
             'description' => 'required|string',
-            'file' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // 2MB FILE SIZE LIMIT
+            'address' => 'required|string',
+            'phone' => 'required|string|regex:/(\+385)[ ][0-9]{2}[ ][0-9]{6}[0-9]?/',
+            'website' => 'required|string|regex:"http[s]?://.*"',
+            'category' => 'required|array|min:3|max:3',
+            'category.*' => 'nullable|string|distinct',
+            'wh_start' => 'required|array|min:7|max:7',
+            'wh_start.*' => 'nullable|string|date_format:H:i',
+            'wh_end' => 'required|array|min:7|max:7',
+            'wh_end.*' => 'nullable|string|date_format:H:i',
+            'file' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // 2MB FILE SIZE LIMIT
         ]);
+
+        return redirect(route('restaurant.show', $id))->with('success', 'Restaurant edited');
     }
 
     /**

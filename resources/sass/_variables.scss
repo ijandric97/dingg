@@ -7,7 +7,7 @@ $font-size-base: 0.9rem;
 $line-height-base: 1.6;
 
 // Colors
-$blue: #3490dc;
+$blue: #007bff;
 $indigo: #6574cd;
 $purple: #9561e2;
 $pink: #f66d9b;
@@ -18,7 +18,17 @@ $green: #38c172;
 $teal: #4dc0b5;
 $cyan: #6cb2eb;
 
-$enable-gradients: false;
+// Laravel somehow has wrong bootstrap colors???
+$primary: #3490dc !default;
+$secondary: #6c757d !default;
+$success: #28a745 !default;
+$danger: #dc3545 !default;
+$warning: #ffc107 !default;
+$info: #17a2b8 !default;
+$light: #f8f9fa !default;
+$dark: #343a40 !default;
+
+$enable-gradients: true;
 $enable-rounded: true;
 $enable-shadows: false;
 $enable-transitions: true;

@@ -72,8 +72,9 @@ class Restaurant extends Model
             ['open_time' => '', 'close_time' => ''],
         ];
 
+        // FRONTEND WILL FAIL IF WE RETURN H:M:S format, so we return H:M format
         foreach ($workhours as $workhour) {
-            $workhours_table[$workhour->day_of_week] = ['open_time' => $workhour->open_time, 'close_time' => $workhour->close_time];
+            $workhours_table[$workhour->day_of_week] = ['open_time' => substr($workhour->open_time, 0, -3), 'close_time' => substr($workhour->close_time, 0, -3)];
         }
 
         return $workhours_table;

@@ -3,10 +3,10 @@
 <head>
     @include('includes.head')
 </head>
-<body class="bg-primary">
+<body class="bg-gradient-primary">
     <div id="app">
         @include('includes.navbar')
-        <main class="py-4 bg-white">
+        <main class="py-4 bg-gradient-light">
             @include('includes.status-alert')
             @yield('content')
         </main>
