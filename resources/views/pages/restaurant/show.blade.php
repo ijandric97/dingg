@@ -15,7 +15,7 @@
         <div class="col-md-4 mb-3">
             <img src="{{asset('storage/images/restaurant/' . $restaurant->image_path)}}" onerror="this.onerror=null; this.src='{{asset('storage/images/restaurant/placeholder.png')}}'" class="d-block m-auto w-100 img-fluid dingg-border rounded" alt="{{$restaurant->name}} picture">
             @auth
-                <a href="#" class="btn btn-info btn-lg d-block mx-auto mt-2">Create an order 🍕</a> {{-- Order Button --}}
+                <a href="#" class="btn btn-primary btn-lg d-block mx-auto mt-2">Create an order 🍕</a> {{-- Order Button --}}
             @else
                 <a href="{{route('register')}}" class="btn btn-secondary btn-lg d-block mx-auto mt-2">Register to order 😊</a>
             @endauth
@@ -77,6 +77,24 @@
                         <td>{{$workhours[$i]['open_time']}} - {{$workhours[$i]['close_time']}}</td>
                     </tr>
                     @endfor
+                </tbody>
+            </table>
+
+            <h3>Menu</h3>
+            <table class="table table-sm table-sss table-striped text-center">
+                <tbody>
+                    @foreach ($restaurant->groups()->get() as $group)
+                        <tr>
+                            <th scope="row" colspan="2" class="bg-primary dingg-border text-white">{{$group->name}}</th>
+                        </tr>
+
+                        @foreach ($group->products()->get() as $product)
+                            <tr>
+                                <th scope="row">{{$product->name}}</th>
+                                <td>{{$product->getCurrentPrice()}} HRK</td>
+                            </tr>
+                        @endforeach
+                    @endforeach
                 </tbody>
             </table>
         </div>

@@ -60,7 +60,7 @@ class RestaurantController extends Controller
     {
         $restaurant = Restaurant::findOrFail($id);
         $workhours = $restaurant->getWorkhoursTable();
-        $comments = $restaurant->comments()->orderBy('updated_at', 'desc')->paginate(5);
+        $comments = $restaurant->comments()->orderBy('updated_at', 'desc')->paginate(10);
 
         return view('pages.restaurant.show', ['restaurant' => $restaurant, 'workhours' => $workhours, 'comments' => $comments]);
     }
