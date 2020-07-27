@@ -85,9 +85,9 @@
 
             {{-- Menu items --}}
             <div class="d-flex justify-content-between btn-group" role="group">
-                <button type="button" class="btn btn-primary" onclick="cycleGroup(false)" style="border-radius: 0.25rem 0.25rem 0px 0px;">←</button>
+                <button type="button" class="btn btn-primary" onclick="cycleGroup(false)" style="border-radius: 0.25rem 0px 0px 0px;">←</button>
                 <button type="button" class="btn btn-primary disabled" style="opacity: 1;"><h3 class="d-inline">Menu</h3></button>
-                <button type="button" class="btn btn-primary" onclick="cycleGroup(true)" style="border-radius: 0.25rem 0.25rem 0px 0px;">→</button>
+                <button type="button" class="btn btn-primary" onclick="cycleGroup(true)" style="border-radius: 0px 0.25rem 0px 0px;">→</button>
             </div>
             @php($i = 0) {{-- For the hide functionality --}}
             @foreach ($restaurant->groups()->get() as $group)
