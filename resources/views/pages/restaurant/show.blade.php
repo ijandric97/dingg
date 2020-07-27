@@ -68,8 +68,33 @@
     @php ($days = [0 => 'Monday', 1 => 'Tuesday', 2 => 'Wednesday', 3 => 'Thursday', 4 => 'Friday', 5 => 'Saturday', 6 => 'Sunday'])
     <div class="row mb-2"> {{-- Basic Info --}}
         <div class="col-md-4 mb-3">
-            <h3>Workhours</h3>
-            <table class="table table-sm">
+            {{-- Menu items --}}
+            <div class="d-flex justify-content-between mb-2">
+                <button type="button" class="btn btn-dark" onclick="cycleGroup(false)">←</button>
+                <h3 class="d-inline">Menu</h3>
+                <button type="button" class="btn btn-dark" onclick="cycleGroup(true)">→</button>
+            </div>
+            @php($i = 0) {{-- For the hide functionality --}}
+            @foreach ($restaurant->groups()->get() as $group)
+            <table id="group_{{$i}}"class="table table-sm table-striped text-center" style="display: {{$i == 0 ? 'table' : 'none'}}">
+                <tbody>
+                    <tr>
+                        <th scope="row" colspan="2" class="bg-primary dingg-border text-white">{{$group->name}}</th>
+                    </tr>
+                    @foreach ($group->products()->get() as $product)
+                        <tr>
+                            <th scope="row">{{$product->name}}</th>
+                            <td>{{$product->getCurrentPrice()}} HRK</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+            @php($i = $i + 1)
+            @endforeach
+
+            {{-- Workhours --}}
+            <h3 class="text-center">Workhours</h3>
+            <table class="table table-sm table-striped text-center">
                 <tbody>
                     @for ($i = 0; $i < 7; $i++)
                     <tr>
@@ -77,24 +102,6 @@
                         <td>{{$workhours[$i]['open_time']}} - {{$workhours[$i]['close_time']}}</td>
                     </tr>
                     @endfor
-                </tbody>
-            </table>
-
-            <h3>Menu</h3>
-            <table class="table table-sm table-sss table-striped text-center">
-                <tbody>
-                    @foreach ($restaurant->groups()->get() as $group)
-                        <tr>
-                            <th scope="row" colspan="2" class="bg-primary dingg-border text-white">{{$group->name}}</th>
-                        </tr>
-
-                        @foreach ($group->products()->get() as $product)
-                            <tr>
-                                <th scope="row">{{$product->name}}</th>
-                                <td>{{$product->getCurrentPrice()}} HRK</td>
-                            </tr>
-                        @endforeach
-                    @endforeach
                 </tbody>
             </table>
         </div>
@@ -156,12 +163,42 @@
 
 @push('scripts')
 <script>
+
     var range = document.getElementById("addCommentRange");
     var label = document.getElementById("addCommentRangeLabel");
     label.innerHTML = "Rating: " + "⭐".repeat(range.value);
 
     range.oninput = function() {
         label.innerHTML = "Rating: " + "⭐".repeat(range.value);
+    }
+
+    var selectedGroup = 0;
+    function cycleGroup(isRight) {
+        var size = {{$restaurant->groups()->count()-1}};
+
+        if (isRight) {
+            if (selectedGroup >= size) {
+                selectedGroup = 0;
+            } else {
+                selectedGroup++;
+            }
+        } else {
+            if (selectedGroup <= 0) {
+                selectedGroup = size;
+            } else {
+                selectedGroup--;
+            }
+        }
+
+        for (let i = 0; i <= size; i++) {
+            if (i === selectedGroup) {
+                document.getElementById("group_"+i).style.display = "table";
+            } else {
+                document.getElementById("group_"+i).style.display = "none";
+            }
+        }
+
+        console.log(selectedGroup);
     }
 
     function toggleCommentForm() {
