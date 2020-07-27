@@ -68,18 +68,33 @@
     @php ($days = [0 => 'Monday', 1 => 'Tuesday', 2 => 'Wednesday', 3 => 'Thursday', 4 => 'Friday', 5 => 'Saturday', 6 => 'Sunday'])
     <div class="row mb-2"> {{-- Basic Info --}}
         <div class="col-md-4 mb-3">
+            {{-- Workhours --}}
+            <h3 class="text-center text-md-left">Workhours</h3>
+            <table class="table table-sm dingg-border">
+                <tbody>
+                    @for ($i = 0; $i < 7; $i++)
+                        @if($workhours[$i]['open_time'])
+                            <tr>
+                                <th scope="row">{{$days[$i]}}</th>
+                                <td>{{$workhours[$i]['open_time']}} - {{$workhours[$i]['close_time']}}</td>
+                            </tr>
+                        @endif
+                    @endfor
+                </tbody>
+            </table>
+
             {{-- Menu items --}}
-            <div class="d-flex justify-content-between mb-2">
-                <button type="button" class="btn btn-dark" onclick="cycleGroup(false)">←</button>
-                <h3 class="d-inline">Menu</h3>
-                <button type="button" class="btn btn-dark" onclick="cycleGroup(true)">→</button>
+            <div class="d-flex justify-content-between btn-group" role="group">
+                <button type="button" class="btn btn-primary" onclick="cycleGroup(false)" style="border-radius: 0.25rem 0.25rem 0px 0px;">←</button>
+                <button type="button" class="btn btn-primary disabled" style="opacity: 1;"><h3 class="d-inline">Menu</h3></button>
+                <button type="button" class="btn btn-primary" onclick="cycleGroup(true)" style="border-radius: 0.25rem 0.25rem 0px 0px;">→</button>
             </div>
             @php($i = 0) {{-- For the hide functionality --}}
             @foreach ($restaurant->groups()->get() as $group)
-            <table id="group_{{$i}}"class="table table-sm table-striped text-center" style="display: {{$i == 0 ? 'table' : 'none'}}">
-                <tbody>
+            <table id="group_{{$i}}"class="table table-sm table-striped" style="display: {{$i == 0 ? 'table' : 'none'}};">
+                <tbody class="dingg-border">
                     <tr>
-                        <th scope="row" colspan="2" class="bg-primary dingg-border text-white">{{$group->name}}</th>
+                        <th scope="row" colspan="2" class="bg-primary text-center text-white">{{$group->name}}</th>
                     </tr>
                     @foreach ($group->products()->get() as $product)
                         <tr>
@@ -91,19 +106,6 @@
             </table>
             @php($i = $i + 1)
             @endforeach
-
-            {{-- Workhours --}}
-            <h3 class="text-center">Workhours</h3>
-            <table class="table table-sm table-striped text-center">
-                <tbody>
-                    @for ($i = 0; $i < 7; $i++)
-                    <tr>
-                        <th scope="row">{{$days[$i]}}</th>
-                        <td>{{$workhours[$i]['open_time']}} - {{$workhours[$i]['close_time']}}</td>
-                    </tr>
-                    @endfor
-                </tbody>
-            </table>
         </div>
         <div class="col-md-8">
             <h3 class="d-inline-block mr-2 mb-2">Comments<button id="addCommentBtn" class="ml-2 btn btn-success" onClick="toggleCommentForm()" role="button">✎ Add</button></h3>
