@@ -16,7 +16,9 @@ class CreateTablesTable extends Migration
         Schema::create('tables', function (Blueprint $table) {
             $table->id();
             $table->integer('seat_count');
+            $table->string('description')->default('');
             $table->foreignId('restaurant_id')->constrained();
+            $table->boolean('deleted')->default(false); // WE DONT ACTUALLY DELETE
         });
     }
 

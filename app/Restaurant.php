@@ -63,18 +63,19 @@ class Restaurant extends Model
         $workhours = $this->workhours()->orderBy('day_of_week', 'asc')->get();
 
         $workhours_table = [
-            ['open_time' => '', 'close_time' => ''],
-            ['open_time' => '', 'close_time' => ''],
-            ['open_time' => '', 'close_time' => ''],
-            ['open_time' => '', 'close_time' => ''],
-            ['open_time' => '', 'close_time' => ''],
-            ['open_time' => '', 'close_time' => ''],
-            ['open_time' => '', 'close_time' => ''],
+            ['day' => 'Monday', 'open_time' => '', 'close_time' => ''],
+            ['day' => 'Tuesday', 'open_time' => '', 'close_time' => ''],
+            ['day' => 'Wednesday', 'open_time' => '', 'close_time' => ''],
+            ['day' => 'Thursday', 'open_time' => '', 'close_time' => ''],
+            ['day' => 'Friday', 'open_time' => '', 'close_time' => ''],
+            ['day' => 'Saturday', 'open_time' => '', 'close_time' => ''],
+            ['day' => 'Sunday', 'open_time' => '', 'close_time' => ''],
         ];
 
         // FRONTEND WILL FAIL IF WE RETURN H:M:S format, so we return H:M format
         foreach ($workhours as $workhour) {
-            $workhours_table[$workhour->day_of_week] = ['open_time' => substr($workhour->open_time, 0, -3), 'close_time' => substr($workhour->close_time, 0, -3)];
+            $workhours_table[$workhour->day_of_week]['open_time'] = substr($workhour->open_time, 0, -3);
+            $workhours_table[$workhour->day_of_week]['close_time'] = substr($workhour->close_time, 0, -3);
         }
 
         return $workhours_table;

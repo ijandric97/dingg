@@ -24,6 +24,7 @@ class CreateUsersTable extends Migration
             $table->string('role');
             $table->string('phone');
             $table->string('image_path');
+            $table->boolean('deleted')->default(false); // WE DONT DELETE, WE SET AS CLOSED
         });
     }
 

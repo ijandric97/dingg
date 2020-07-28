@@ -92,8 +92,6 @@
         </div>
         <div class="form-group"> {{-- Workhours --}}
             <label for="workhours">Workhours</label>
-            {{-- Define days array so we can elegantly for loop this section --}}
-            @php ($days = [0 => 'Monday', 1 => 'Tuesday', 2 => 'Wednesday', 3 => 'Thursday', 4 => 'Friday', 5 => 'Saturday', 6 => 'Sunday'])
             <div class="table-responsive">
                 <table class="table table-striped border">
                     <thead>
@@ -104,9 +102,9 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @for ($i = 0; $i < 7; $i++)
+                        @for ($i = 0; $i < count($workhours); $i++)
                         <tr>
-                            <td>{{$days[$i]}}</td>
+                            <td>{{$workhours[$i]['day']}}</td>
                             <td>
                                 <input type="time" class="form-control @error('wh_start.'.$i) is-invalid @enderror" name="wh_start[]" value="{{old('wh_start.'.$i, $workhours[$i]['open_time'])}}">
                                 @error('wh_start.'.$i)
@@ -126,6 +124,47 @@
                 <small class="form-text text-muted">NOTE: Delete time if you are closed that day.</small>
             </div>
         </div>
+        <div class="form-group"> {{-- Tables --}}
+            <label class="d-block" for="tables">Tables</label>
+            <div class="table-responsive">
+                <table id="tables" class="table table-striped border">
+                    <thead>
+                        <tr>
+                            <th scope="col" style="width: 6.25rem;">Seat Count</th>
+                            <th scope="col">Description</th>
+                            <th scope="col" style="width: 6.75rem;">
+                                <button type="button" class=" btn btn-success on-top" onclick="addTableRow()">Create +</button>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for ($i = 0; $i < count(old('t_seat', $tables)); $i++)
+                        <tr id="{{'tr_'.$i}}">
+                            <td>
+                                <input type="number" class="form-control @error('t_seat.'.$i) is-invalid @enderror" name="t_seat[]" value="{{old('t_seat.'.$i, $tables[$i]['seat_count'])}}" min="1" max="99" required>
+                                @error('t_seat.'.$i)
+                                    <small class="form-text text-danger">{{$message}}</small>
+                                @enderror
+                            </td>
+                            <td>
+                                <input type="text" class="form-control @error('t_desc.'.$i) is-invalid @enderror" name="t_desc[]" value="{{old('t_desc.'.$i, $tables[$i]['description'])}}">
+                                @error('t_desc.'.$i)
+                                    <small class="form-text text-danger">{{$message}}</small>
+                                @enderror
+                            </td>
+                            <td>
+                                <input type="number" name="t_id[]" value="{{old('t_id.'.$i, $tables[$i]['id'])}}" hidden>
+                                <button type="button" class=" btn btn-danger on-top" onclick="deleteTableRow({{$i}})">Delete 🗑</button>
+                            </td>
+                        </tr>
+                        @endfor
+                    </tbody>
+                </table>
+                @error('t_id')
+                    <small class="form-text text-danger">You need at least 1 table!</small>
+                @enderror
+            </div>
+        </div>
         <div class="form-group"> {{-- Image --}}
             <label class="d-block" for="file">Image</label>
             <img src="{{asset('storage/images/restaurant/' . $restaurant->image_path)}}" class="d-block rounded dingg-border mb-2" alt="Restaurant picture">
@@ -143,3 +182,33 @@
     </form>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    function deleteTableRow($id) {
+        $('#tr_'+$id).remove();
+    }
+
+    var tablesMaxId = {{$tables->max('id')}};
+
+    function addTableRow() {
+        var rowCount = $('#tables tr').length - 2; // Because header and 0 based
+        var insertString = ' \
+            <tr id="tr_' + rowCount + '"> \
+                <td><input type="number" class="form-control" name="t_seat[]" value="1" min="1" max="99" required></td> \
+                <td><input type="text" class="form-control" name="t_desc[]" value=""></td> \
+                <td> \
+                    <input type="number" name="t_id[]" value="" hidden> \
+                    <button type="button" class="btn btn-danger on-top" onclick="deleteTableRow(' + rowCount + ')">Delete 🗑</button> \
+                </td> \
+            </tr> \
+        ';
+
+
+        $('#tables').append(insertString);
+
+
+        console.log(rowCount);
+    }
+</script>
+@endpush

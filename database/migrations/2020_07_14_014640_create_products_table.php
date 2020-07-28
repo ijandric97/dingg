@@ -22,6 +22,8 @@ class CreateProductsTable extends Migration
             $table->float('discount');
             $table->boolean('available');
             $table->foreignId('group_id')->constrained();
+            $table->foreignId('restaurant_id')->constrained();
+            $table->boolean('deleted')->default(false); // WE DONT DELETE, WE SET AS CLOSED
         });
     }
 

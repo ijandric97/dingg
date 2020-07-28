@@ -77,15 +77,18 @@ class RestaurantController extends Controller
 
         $this->authorize('edit-restaurant', $restaurant); // $user is automatically passed
 
-        //dd($restaurant->categories()->get());
-        // Prepare categories
-        $categories = Category::orderBy('name', 'asc')->get();
-
-        // Prepare workhours
-        $workhours = $restaurant->getWorkhoursTable();
+        $categories = Category::orderBy('name', 'asc')->get(); // All categories
         $rest_cats = $restaurant->getCategoriesNameTable(); // Our selected categories
+        $workhours = $restaurant->getWorkhoursTable(); // Our workhours
+        $tables = $restaurant->tables()->get(); // Our tables
 
-        return view('pages.restaurant.edit', ['restaurant' => $restaurant, 'categories' => $categories, 'rest_cats' => $rest_cats, 'workhours' => $workhours]);
+        return view('pages.restaurant.edit', [
+            'restaurant' => $restaurant,
+            'categories' => $categories,
+            'rest_cats' => $rest_cats,
+            'workhours' => $workhours,
+            'tables' => $tables,
+        ]);
     }
 
     /**
@@ -116,6 +119,12 @@ class RestaurantController extends Controller
             'wh_start.*' => 'nullable|string|date_format:H:i',
             'wh_end' => 'required|array|min:7|max:7',
             'wh_end.*' => 'nullable|string|date_format:H:i',
+            't_id' => 'required|array|min:1',
+            't_id.*' => 'nullable|numeric',
+            't_seat'  => 'required|array|min:1',
+            't_seat.*' => 'required|numeric|min:1|max:99',
+            't_desc' => 'required|array|min:1',
+            't_desc.*' => 'nullable|string',
             'file' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // 2MB FILE SIZE LIMIT
         ]);
 
@@ -131,6 +140,17 @@ class RestaurantController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function order($id)
+    {
+        if (!Auth::check()) {
+            abort(403);
+        }
+
+        $restaurant = Restaurant::findOrFail($id);
+
+        return view('pages.restaurant.order', ['restaurant' => $restaurant]);
     }
 
     public function favorite($id)

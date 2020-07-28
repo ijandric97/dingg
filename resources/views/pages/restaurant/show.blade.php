@@ -15,7 +15,7 @@
         <div class="col-md-4 mb-3">
             <img src="{{asset('storage/images/restaurant/' . $restaurant->image_path)}}" onerror="this.onerror=null; this.src='{{asset('storage/images/restaurant/placeholder.png')}}'" class="d-block m-auto w-100 img-fluid dingg-border rounded" alt="{{$restaurant->name}} picture">
             @auth
-                <a href="#" class="btn btn-primary btn-lg d-block mx-auto mt-2">Create an order 🍕</a> {{-- Order Button --}}
+                <a href="{{route('restaurant.order', $restaurant->id)}}" class="btn btn-primary btn-lg d-block mx-auto mt-2">Create an order 🍕</a> {{-- Order Button --}}
             @else
                 <a href="{{route('register')}}" class="btn btn-secondary btn-lg d-block mx-auto mt-2">Register to order 😊</a>
             @endauth
@@ -160,7 +160,7 @@
 
 
 </div>
-@include('includes.category.delete-modal')
+@include('includes.restaurant.delete-modal') {{-- Delete Modal --}}
 @endsection
 
 @push('scripts')
