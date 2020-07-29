@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Auth;
 use App\Restaurant;
 use App\Category;
 use App\Comment;
+use App\Workhour;
+use App\Table;
 
 class RestaurantController extends Controller
 {
@@ -113,20 +115,100 @@ class RestaurantController extends Controller
             'address' => 'required|string',
             'phone' => 'required|string|regex:/(\+385)[ ][0-9]{2}[ ][0-9]{6}[0-9]?/',
             'website' => 'required|string|regex:"http[s]?://.*"',
+            'file' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // 2MB FILE SIZE LIMIT
+            'delete_image' => 'nullable|boolean',
+
             'category' => 'required|array|min:3|max:3',
             'category.*' => 'nullable|string|distinct',
+
             'wh_start' => 'required|array|min:7|max:7',
             'wh_start.*' => 'nullable|string|date_format:H:i',
             'wh_end' => 'required|array|min:7|max:7',
             'wh_end.*' => 'nullable|string|date_format:H:i',
+
             't_id' => 'required|array|min:1',
             't_id.*' => 'nullable|numeric',
             't_seat'  => 'required|array|min:1',
             't_seat.*' => 'required|numeric|min:1|max:99',
             't_desc' => 'required|array|min:1',
             't_desc.*' => 'nullable|string',
-            'file' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // 2MB FILE SIZE LIMIT
         ]);
+
+        // Categories
+        $restaurant->categories()->detach(); // Remove all categories then re add them
+        foreach (request('category') as $category) {
+            if ($category) {
+                $restaurant->categories()->attach(Category::where('name', $category)->first());
+            }
+        }
+
+        // Workhours
+        $restaurant->workhours()->delete(); // Remove all associated workhours then re add them
+        for ($i = 0; $i < 7; $i++) {
+            $start_time = request('wh_start.' . $i);
+            $end_time = request('wh_end.' . $i);
+            if ($start_time and $end_time) {
+                $workhour = new Workhour();
+                $workhour->day_of_week = $i;
+                $workhour->open_time = $start_time;
+                $workhour->close_time = $end_time;
+                $workhour->restaurant()->associate($restaurant);
+                $workhour->save();
+            }
+        }
+
+
+
+        // Tables
+        foreach ($restaurant->tables()->get() as $table) { // Delete the ones we are no longer using
+            $isFound = false;
+
+            for ($i=0; $i < count(request('t_id')); $i++) {
+                $t_id = request('t_id.'.$i);
+                if ($t_id == $table->id) {
+                    $isFound = true;
+                }
+            }
+
+            if ($isFound == false) {
+                $table = Table::find($table->id);
+                $table->deleted = true;
+                $table->save();
+            }
+        }
+        for ($i=0; $i < count(request('t_id')); $i++) { // Edit, Add the ones left
+            $t_id = request('t_id.'.$i);
+            if ($t_id) {
+                $table = Table::find($t_id)->first();
+                $table->seat_count = request('t_seat.'.$i);
+                $table->description = request('t_desc.'.$i);
+                $table->save();
+            } else {
+                $table = new Table();
+                $table->seat_count = request('t_seat.'.$i);
+                $table->description = request('t_desc.'.$i);
+                $table->restaurant()->associate($restaurant);
+                $table->save();
+            }
+        }
+
+        // Restaurant
+        $restaurant->name = request('name');
+        $restaurant->description = request('description');
+        $restaurant->address = request('address');
+        $restaurant->phone = request('phone');
+        $restaurant->website = request('website');
+        $restaurant->address = request('address');
+
+        // Restaurant picture
+        if ($request->has('delete_image') || $request->hasFile('file')) {
+            // Delete the old file
+            if ($restaurant->image_path !== 'placeholder.png') {
+                File::delete('storage/images/restaurant/' . $restaurant->image_path);
+            }
+
+            $request->has('delete_image') ? $restaurant->image_path = 'placeholder.png' : $restaurant->image_path = $this->uploadImage($request);
+        }
 
         return redirect(route('restaurant.show', $id))->with('success', 'Restaurant edited');
     }

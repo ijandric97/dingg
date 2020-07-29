@@ -204,9 +204,7 @@
             </tr> \
         ';
 
-
         $('#tables').append(insertString);
-
 
         console.log(rowCount);
     }

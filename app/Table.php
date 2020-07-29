@@ -4,9 +4,21 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
+use App\Scopes\DeletedScope;
+
 class Table extends Model
 {
     public $timestamps = false;
+
+    /**
+     * The "booted" method of the model.
+     *
+     * @return void
+     */
+    protected static function booted()
+    {
+        static::addGlobalScope(new DeletedScope);
+    }
 
     public function restaurant()
     {
