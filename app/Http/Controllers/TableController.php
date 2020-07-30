@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Group;
+use App\Table;
 use App\Restaurant;
 use Illuminate\Http\Request;
 
-class GroupController extends Controller
+class TableController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -17,9 +17,9 @@ class GroupController extends Controller
     {
         $this->authorize('edit-restaurant', $restaurant);
 
-        return view('pages.restaurant.group.index', [
+        return view('pages.restaurant.table.index', [
             'restaurant' => $restaurant,
-            'groups' => $restaurant->groups()->orderBy('sort_order', 'asc')->get(),
+            'tables' => $restaurant->tables()->get(),
         ]);
     }
 
@@ -27,7 +27,6 @@ class GroupController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  Restaurant  $restaurant
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request, Restaurant $restaurant)
@@ -36,29 +35,28 @@ class GroupController extends Controller
 
         // Validate
         $request->validate([
-            'name' => 'required|array',
-            'name.*' => 'required|string',
-            'description' => 'required|array',
-            'description.*' => 'nullable|string',
-            'id' => 'required|array',
+            'id' => 'required|array|min:1',
             'id.*' => 'nullable|numeric',
+            'seat_count'  => 'required|array|min:1',
+            'seat_count.*' => 'required|numeric|min:1|max:99',
+            'description' => 'required|array|min:1',
+            'description.*' => 'nullable|string',
         ]);
 
         // Delete non-existing ones by comparing ids in the request with the id's in the base
-        foreach ($restaurant->groups()->get() as $group) {
+        foreach ($restaurant->tables()->get() as $table) {
             $found = false;
 
             for ($i = 0; $i < count(request('id')); $i++) {
                 $id = request('id.' . $i);
-                if ($id == $group->id) {
+                if ($id == $table->id) {
                     $found = true;
                 }
             }
 
             if ($found == false) {
-                $group->restaurant()->dissociate();
-                $group->products()->update(['group_id' => null]); // We need to manually detach all hasMany
-                $group->delete();
+                $table->deleted = true;
+                $table->save();
             }
         }
 
@@ -67,18 +65,17 @@ class GroupController extends Controller
             $id = request('id.' . $i);
 
             if ($id) {
-                $group = Group::findOrFail($id)->first();
+                $table = Table::find($id)->first();
             } else {
-                $group = new Group();
+                $table = new Table();
             }
 
-            $group->name = request('name.' . $i);
-            $group->description = request('description.' . $i);
-            $group->sort_order = $i;
-            $group->restaurant()->associate($restaurant);
-            $group->save();
+            $table->seat_count = request('seat_count.' . $i);
+            $table->description = request('description.' . $i);
+            $table->restaurant()->associate($restaurant);
+            $table->save();
         }
 
-        return redirect(route('restaurant.show', $restaurant->id))->with('success', 'Groups edited');
+        return redirect(route('restaurant.show', $restaurant->id))->with('success', 'Tables edited');
     }
 }

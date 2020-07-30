@@ -32,3 +32,6 @@ Route::resource('category', 'CategoryController');
 Route::resource('restaurant', 'RestaurantController');
 Route::resource('restaurant.comment', 'CommentController')->only(['store', 'destroy']);
 Route::resource('restaurant.group', 'GroupController')->only(['index', 'store']);
+Route::resource('restaurant.table', 'TableController')->only(['index', 'store']);
+Route::resource('restaurant.product', 'ProductController');
+Route::resource('restaurant.workhour', 'WorkhourController')->only(['index', 'store']);

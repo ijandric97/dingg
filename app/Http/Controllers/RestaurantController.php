@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\Auth;
 use App\Restaurant;
 use App\Category;
 use App\Comment;
-use App\Workhour;
 use App\Table;
 
 class RestaurantController extends Controller
@@ -60,15 +59,12 @@ class RestaurantController extends Controller
      */
     public function show(Restaurant $restaurant)
     {
-        $rating = $restaurant->rating();
-        $workhours = $restaurant->getWorkhoursTable();
-        $comments = $restaurant->comments()->orderBy('updated_at', 'desc')->paginate(5);
-
         return view('pages.restaurant.show', [
             'restaurant' => $restaurant,
-            'workhours' => $workhours,
-            'comments' => $comments,
-            'rating' => $rating,
+            'workhours' => $restaurant->getWorkhoursTable(),
+            'comments' => $restaurant->comments()->orderBy('updated_at', 'desc')->paginate(5),
+            'rating' => $restaurant->rating(),
+            'categories' => $restaurant->categories()->get(),
         ]);
     }
 
@@ -84,15 +80,12 @@ class RestaurantController extends Controller
 
         $categories = Category::orderBy('name', 'asc')->get(); // All categories
         $rest_cats = $restaurant->getCategoriesNameTable(); // Our selected categories
-        $workhours = $restaurant->getWorkhoursTable(); // Our workhours
-        $tables = $restaurant->tables()->get(); // Our tables
 
         return view('pages.restaurant.edit', [
             'restaurant' => $restaurant,
             'categories' => $categories,
             'rest_cats' => $rest_cats,
-            'workhours' => $workhours,
-            'tables' => $tables,
+            'tables' => $restaurant->tables()->get(),
         ]);
     }
 
@@ -103,12 +96,8 @@ class RestaurantController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Restaurant $restaurant)
     {
-        //dd($request);
-
-        $restaurant = Restaurant::findOrFail($id);
-
         $this->authorize('edit-restaurant', $restaurant); // $user is automatically passed
 
         // Validate
@@ -123,18 +112,6 @@ class RestaurantController extends Controller
 
             'category' => 'required|array|min:3|max:3',
             'category.*' => 'nullable|string|distinct',
-
-            'wh_start' => 'required|array|min:7|max:7',
-            'wh_start.*' => 'nullable|string|date_format:H:i',
-            'wh_end' => 'required|array|min:7|max:7',
-            'wh_end.*' => 'nullable|string|date_format:H:i',
-
-            't_id' => 'required|array|min:1',
-            't_id.*' => 'nullable|numeric',
-            't_seat'  => 'required|array|min:1',
-            't_seat.*' => 'required|numeric|min:1|max:99',
-            't_desc' => 'required|array|min:1',
-            't_desc.*' => 'nullable|string',
         ]);
 
         // Categories
@@ -142,56 +119,6 @@ class RestaurantController extends Controller
         foreach (request('category') as $category) {
             if ($category) {
                 $restaurant->categories()->attach(Category::where('name', $category)->first());
-            }
-        }
-
-        // Workhours
-        $restaurant->workhours()->delete(); // Remove all associated workhours then re add them
-        for ($i = 0; $i < 7; $i++) {
-            $start_time = request('wh_start.' . $i);
-            $end_time = request('wh_end.' . $i);
-            if ($start_time and $end_time) {
-                $workhour = new Workhour();
-                $workhour->day_of_week = $i;
-                $workhour->open_time = $start_time;
-                $workhour->close_time = $end_time;
-                $workhour->restaurant()->associate($restaurant);
-                $workhour->save();
-            }
-        }
-
-
-
-        // Tables
-        foreach ($restaurant->tables()->get() as $table) { // Delete the ones we are no longer using
-            $isFound = false;
-
-            for ($i = 0; $i < count(request('t_id')); $i++) {
-                $t_id = request('t_id.' . $i);
-                if ($t_id == $table->id) {
-                    $isFound = true;
-                }
-            }
-
-            if ($isFound == false) {
-                $table = Table::find($table->id);
-                $table->deleted = true;
-                $table->save();
-            }
-        }
-        for ($i = 0; $i < count(request('t_id')); $i++) { // Edit, Add the ones left
-            $t_id = request('t_id.' . $i);
-            if ($t_id) {
-                $table = Table::find($t_id)->first();
-                $table->seat_count = request('t_seat.' . $i);
-                $table->description = request('t_desc.' . $i);
-                $table->save();
-            } else {
-                $table = new Table();
-                $table->seat_count = request('t_seat.' . $i);
-                $table->description = request('t_desc.' . $i);
-                $table->restaurant()->associate($restaurant);
-                $table->save();
             }
         }
 
@@ -215,7 +142,7 @@ class RestaurantController extends Controller
 
         $restaurant->save();
 
-        return redirect(route('restaurant.show', $id))->with('success', 'Restaurant edited');
+        return redirect(route('restaurant.show', $restaurant))->with('success', 'Restaurant edited');
     }
 
     /**
