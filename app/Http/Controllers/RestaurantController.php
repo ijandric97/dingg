@@ -249,41 +249,4 @@ class RestaurantController extends Controller
 
         return redirect(route('restaurant.show', $id));
     }
-
-    public function addComment(Request $request, $id)
-    {
-        if (!Auth::check()) {
-            abort(403);
-        }
-
-        // Validate
-        $request->validate([
-            'title' => 'required|string|max:250',
-            'body' => 'required|string',
-            'rating' => 'required|numeric|min:1|max:5',
-        ]);
-
-        $comment = new Comment();
-
-        $comment->title = request('title');
-        $comment->body = request('body');
-        $comment->rating = request('rating');
-        $comment->user_id = Auth::user()->id;
-        $comment->restaurant_id = Restaurant::findOrFail($id)->id;
-
-        $comment->save();
-
-        return redirect(route('restaurant.show', $id));
-    }
-
-    public function deleteComment(Request $request, $restaurant_id, $comment_id)
-    {
-        $comment = Comment::findOrFail($comment_id);
-
-        $this->authorize('delete-comment', $comment);
-
-        $comment->delete();
-
-        return redirect(route('restaurant.show', $restaurant_id));
-    }
 }

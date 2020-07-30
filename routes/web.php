@@ -20,11 +20,15 @@ Route::get('/', 'HomeController@index')->name('home');
 Route::get('/admin', 'AdminController@index')->name('admin.index');
 //Route::get('/admin/category', 'AdminController@category')->name('admin.category');
 
-Route::resource('category', 'CategoryController');
+
 
 Route::get('/restaurant/{id}/favorite', 'RestaurantController@favorite')->name('restaurant.favorite');
+
 Route::get('/restaurant/{id}/order', 'RestaurantController@order')->name('restaurant.order');
 Route::post('/restaurant/{id}/order', 'RestaurantController@addOrder')->name('restaurant.add_order');
-Route::post('/restaurant/{id}/comment/add', 'RestaurantController@addComment')->name('restaurant.add_comment');
-Route::delete('/restaurant/{id}/comment/delete/{c_id}', 'RestaurantController@deleteComment')->name('restaurant.delete_comment');
+
+Route::resource('category', 'CategoryController');
+
 Route::resource('restaurant', 'RestaurantController');
+Route::resource('restaurant.comment', 'CommentController')->only(['store', 'destroy']);
+Route::resource('restaurant.group', 'GroupController')->only(['index', 'store']);

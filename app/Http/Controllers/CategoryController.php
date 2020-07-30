@@ -70,12 +70,12 @@ class CategoryController extends Controller
             'file' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // 2MB FILE SIZE LIMIT
         ]);
 
-        $category = new Category();
-        $category->name = request('name');
-        $category->description = request('description');
-        $category->image_path = 'placeholder.png';
+        $category = new Category([
+            'name' => request('name'),
+            'description' => request('description'),
+        ]);
 
-        // Handle File Upload
+        $category->image_path = 'placeholder.png';
         if ($request->hasFile('file')) {
             // Upload the image to database and update the image_path in the database
             $category->image_path = $this->uploadImage($request);
@@ -92,10 +92,9 @@ class CategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Category $category)
     {
-        //dd($category->restaurants);
-        return view('pages.category.show', ['category' => Category::findOrFail($id)]);
+        return view('pages.category.show', ['category' => $category]);
     }
 
     /**
@@ -118,12 +117,9 @@ class CategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Category $category)
     {
         $this->authorize('is-admin', auth()->user()); // Not even sure if we need this, but i will leave it
-
-        // Validate
-        $category = Category::findOrFail($id);
 
         $request->validate([
             'name' => 'required|string|max:50|unique:categories,name,' . $category->id,
@@ -146,7 +142,7 @@ class CategoryController extends Controller
 
         $category->save();
 
-        return redirect(route('category.show', $id))->with('success', 'Category edited');
+        return redirect(route('category.show', $category->id))->with('success', 'Category edited');
     }
 
     /**
@@ -155,11 +151,10 @@ class CategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Category $category)
     {
         $this->authorize('is-admin', auth()->user());
 
-        $category = Category::findOrFail($id);
         $category->restaurants()->detach(); // Remove the associations with this category in category_restaurant pivot table
         $category->delete();
 

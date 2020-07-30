@@ -108,8 +108,12 @@
             @endforeach
         </div>
         <div class="col-md-8">
-            <h3 class="d-inline-block mr-2 mb-2">Comments<button id="addCommentBtn" class="ml-2 btn btn-success" onClick="toggleCommentForm()" role="button">✎ Add</button></h3>
-            <form id="addCommentForm" method="POST" action="{{route('restaurant.add_comment', $restaurant->id)}}" style="display: none;"> {{-- Add comment form --}}
+            <h3 class="d-inline-block mr-2 mb-2">Comments
+                @auth
+                    <button id="addCommentBtn" class="ml-2 btn btn-success" onClick="toggleCommentForm()" role="button">✎ Add</button>
+                @endauth
+            </h3>
+            <form id="addCommentForm" method="POST" action="{{route('restaurant.comment.store', $restaurant->id)}}" style="display: none;"> {{-- Add comment form --}}
                 @csrf
                 <div class="card mb-2">
                     <div class="card-header">
@@ -143,7 +147,7 @@
                         </div>
                         <p class="card-text">{{$comment->body}}</p>
                         @can('delete-comment', $comment)
-                            <form method="POST" action="{{route('restaurant.delete_comment', [$restaurant->id, $comment->id])}}"> {{-- Add comment form --}}
+                            <form method="POST" action="{{route('restaurant.comment.destroy', [$restaurant->id, $comment->id])}}"> {{-- Add comment form --}}
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-danger">Delete 🗑</button> {{-- Delete comment Button --}}
@@ -165,14 +169,20 @@
 
 @push('scripts')
 <script>
-
-    var range = document.getElementById("addCommentRange");
-    var label = document.getElementById("addCommentRangeLabel");
-    label.innerHTML = "Rating: " + "⭐".repeat(range.value);
-
-    range.oninput = function() {
+    @auth
+        var range = document.getElementById("addCommentRange");
+        var label = document.getElementById("addCommentRangeLabel");
         label.innerHTML = "Rating: " + "⭐".repeat(range.value);
-    }
+
+        range.oninput = function() {
+            label.innerHTML = "Rating: " + "⭐".repeat(range.value);
+        }
+
+        function toggleCommentForm() {
+            document.getElementById("addCommentForm").style.display = "block";
+            document.getElementById("addCommentBtn").style.display = "none";
+        }
+    @endauth
 
     var selectedGroup = 0;
     function cycleGroup(isRight) {
@@ -199,13 +209,6 @@
                 document.getElementById("group_"+i).style.display = "none";
             }
         }
-
-        console.log(selectedGroup);
-    }
-
-    function toggleCommentForm() {
-        document.getElementById("addCommentForm").style.display = "block";
-        document.getElementById("addCommentBtn").style.display = "none";
     }
 </script>
 @endpush
