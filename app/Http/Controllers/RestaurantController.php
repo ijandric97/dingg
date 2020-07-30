@@ -55,28 +55,31 @@ class RestaurantController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  Restaurant  $restaurant
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Restaurant $restaurant)
     {
-        $restaurant = Restaurant::findOrFail($id);
+        $rating = $restaurant->rating();
         $workhours = $restaurant->getWorkhoursTable();
-        $comments = $restaurant->comments()->orderBy('updated_at', 'desc')->paginate(10);
+        $comments = $restaurant->comments()->orderBy('updated_at', 'desc')->paginate(5);
 
-        return view('pages.restaurant.show', ['restaurant' => $restaurant, 'workhours' => $workhours, 'comments' => $comments]);
+        return view('pages.restaurant.show', [
+            'restaurant' => $restaurant,
+            'workhours' => $workhours,
+            'comments' => $comments,
+            'rating' => $rating,
+        ]);
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param  Restaurant  $restaurant
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Restaurant $restaurant)
     {
-        $restaurant = Restaurant::findOrFail($id);
-
         $this->authorize('edit-restaurant', $restaurant); // $user is automatically passed
 
         $categories = Category::orderBy('name', 'asc')->get(); // All categories
@@ -163,8 +166,8 @@ class RestaurantController extends Controller
         foreach ($restaurant->tables()->get() as $table) { // Delete the ones we are no longer using
             $isFound = false;
 
-            for ($i=0; $i < count(request('t_id')); $i++) {
-                $t_id = request('t_id.'.$i);
+            for ($i = 0; $i < count(request('t_id')); $i++) {
+                $t_id = request('t_id.' . $i);
                 if ($t_id == $table->id) {
                     $isFound = true;
                 }
@@ -176,17 +179,17 @@ class RestaurantController extends Controller
                 $table->save();
             }
         }
-        for ($i=0; $i < count(request('t_id')); $i++) { // Edit, Add the ones left
-            $t_id = request('t_id.'.$i);
+        for ($i = 0; $i < count(request('t_id')); $i++) { // Edit, Add the ones left
+            $t_id = request('t_id.' . $i);
             if ($t_id) {
                 $table = Table::find($t_id)->first();
-                $table->seat_count = request('t_seat.'.$i);
-                $table->description = request('t_desc.'.$i);
+                $table->seat_count = request('t_seat.' . $i);
+                $table->description = request('t_desc.' . $i);
                 $table->save();
             } else {
                 $table = new Table();
-                $table->seat_count = request('t_seat.'.$i);
-                $table->description = request('t_desc.'.$i);
+                $table->seat_count = request('t_seat.' . $i);
+                $table->description = request('t_desc.' . $i);
                 $table->restaurant()->associate($restaurant);
                 $table->save();
             }
@@ -209,6 +212,8 @@ class RestaurantController extends Controller
 
             $request->has('delete_image') ? $restaurant->image_path = 'placeholder.png' : $restaurant->image_path = $this->uploadImage($request);
         }
+
+        $restaurant->save();
 
         return redirect(route('restaurant.show', $id))->with('success', 'Restaurant edited');
     }
@@ -248,5 +253,27 @@ class RestaurantController extends Controller
         }
 
         return redirect(route('restaurant.show', $id));
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @param \Illuminate\Http\Request  $request
+     * @return string
+     */
+    private function uploadImage($request)
+    {
+        // Create new Filename to store
+        $filenameWithExt = $request->file('file')->getClientOriginalName();
+        $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
+        $extension = $request->file('file')->getClientOriginalExtension();
+        $filenameToStore = $filename . '_' . time() . '.' . $extension;
+
+        // Resize and store the new file
+        $image_resize = Image::make($request->file('file')->getRealPath());
+        $image_resize->resize(320, 240);
+        $image_resize->save('storage/images/restaurant/' . $filenameToStore);
+
+        return $filenameToStore;
     }
 }

@@ -11,37 +11,72 @@
         </ol>
     </nav>
 
-    <div class="row mb-2"> {{-- Basic Info --}}
+    {{-- Control Panel --}}
+    @can('edit-restaurant', $restaurant)
+    <div class="card border-primary mb-3">
+        <div class="card-header d-flex">
+            {{-- Title --}}
+            <p class="lead m-0 align-self-center">Control Panel</p>
+
+            {{-- Orders Button --}}
+            <a class="btn btn-primary ml-auto" href="{{route('restaurant.edit', $restaurant->id)}}" role="button">🧾 Orders</a>
+
+            {{-- Edit Dropdown --}}
+            <div class="dropdown ml-2">
+                <button class="btn btn-warning dropdown-toggle" type="button" data-toggle="dropdown">✏️ Edit</button>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" href="{{route('restaurant.edit', $restaurant)}}">Restaurant</a>
+                    <a class="dropdown-item" href="#">Workhours</a>
+                    <a class="dropdown-item" href="#">Tables</a>
+                    <a class="dropdown-item" href="#">Groups</a>
+                    <a class="dropdown-item" href="#">Products</a>
+                </div>
+            </div>
+
+            {{-- Delete Button --}}
+            @can('is-admin')
+                <button type="button" class="btn ml-2 btn-danger on-top" data-toggle="modal" data-target="#RestaurantDeleteModal" data-id="{{$restaurant->id}}" data-title="{{$restaurant->name}}">🗑️ Delete</button>
+            @endcan
+        </div>
+    </div>
+    @endcan
+
+    {{-- 2-Column Information --}}
+    <div class="row mb-2">
+
+        {{-- Left Column --}}
         <div class="col-md-4 mb-3">
+            {{-- Restaurant Image --}}
             <img src="{{asset('storage/images/restaurant/' . $restaurant->image_path)}}" onerror="this.onerror=null; this.src='{{asset('storage/images/restaurant/placeholder.png')}}'" class="d-block m-auto w-100 img-fluid dingg-border rounded" alt="{{$restaurant->name}} picture">
+
+            {{-- Order / Register Button --}}
             @auth
-                <a href="{{route('restaurant.order', $restaurant->id)}}" class="btn btn-primary btn-lg d-block mx-auto mt-2">Create an order 🍕</a> {{-- Order Button --}}
+                <a href="{{route('restaurant.order', $restaurant->id)}}" class="btn btn-primary btn-lg d-block mx-auto mt-2">Create an order 🍕</a>
             @else
                 <a href="{{route('register')}}" class="btn btn-secondary btn-lg d-block mx-auto mt-2">Register to order 😊</a>
             @endauth
         </div>
+
+        {{-- Right Column --}}
         <div class="col-md-8 text-center text-md-left">
-            <h1 class="d-inline-block mr-2 mb-2">{{$restaurant->name}}</h1> {{-- Title --}}
-            @include('includes.restaurant.edit-delete-button')              {{-- Edit / Delete --}}
+            <h1 class="mr-2 mb-2">{{$restaurant->name}}</h1> {{-- Title --}}
             <p class="lead mb-2">{{$restaurant->description}}</p>           {{-- Description --}}
 
-
-            <div class="d-inline-block"> {{-- Categories --}}
+            {{-- Categories --}}
+            <div class="d-inline-block">
                 @foreach ($restaurant->categories()->get() as $category)
                     <a href="{{route('category.show', $category->id)}}" class="btn btn-dark btn-secondary active mb-2" style="vertical-align: super;" role="button">{{$category->name}}</a>
                 @endforeach
             </div>
 
-            <div class="d-inline-block mb-3"> {{-- Rating / Favorite --}}
-                @php
-                    $rating = $restaurant->rating();
-                    $color = $rating >= 4 ? 'btn-success' : ($rating < 2.5 ? 'btn-danger' : 'btn-warning');
-                @endphp
-                <button class="btn {{$color}} font-weight-bold disabled" style="opacity: 1; vertical-align: super;">{{'⭐ '.$rating}} / 5</button>
+            {{-- Rating / Favorite --}}
+            <div class="d-inline-block mb-3">
+                <button class="btn {{$rating >= 4 ? 'btn-success' : ($rating < 2.5 ? 'btn-danger' : 'btn-warning')}} font-weight-bold disabled" style="opacity: 1; vertical-align: super;">{{'⭐ '.$rating}} / 5</button>
                 @include('includes.restaurant.favorite-button')
             </div>
 
-            <table class="table table-sm"> {{-- Info --}}
+            {{-- Info --}}
+            <table class="table table-sm">
                 <tbody>
                     <tr>
                         <th scope="row">Address</th>
@@ -57,7 +92,9 @@
                     </tr>
                 </tbody>
             </table>
-            <div class="alert alert-primary" role="alert">
+
+            {{-- Alert --}}
+            <div class="alert alert-warning" role="alert">
                 If you have allergies or other dietary restrictions, please contact the restaurant.<br/>
                 The restaurant will provide food-specific information upon request.
             </div>
@@ -65,21 +102,20 @@
     </div>
 
     {{-- Define days array so we can elegantly for loop this section --}}
-    @php ($days = [0 => 'Monday', 1 => 'Tuesday', 2 => 'Wednesday', 3 => 'Thursday', 4 => 'Friday', 5 => 'Saturday', 6 => 'Sunday'])
     <div class="row mb-2"> {{-- Basic Info --}}
         <div class="col-md-4 mb-3">
             {{-- Workhours --}}
             <h3 class="text-center text-md-left">Workhours</h3>
             <table class="table table-sm dingg-border">
                 <tbody>
-                    @for ($i = 0; $i < 7; $i++)
-                        @if($workhours[$i]['open_time'])
-                            <tr>
-                                <th scope="row">{{$days[$i]}}</th>
-                                <td>{{$workhours[$i]['open_time']}} - {{$workhours[$i]['close_time']}}</td>
-                            </tr>
+                    @foreach ($workhours as $workhour)
+                        @if($workhour['open_time'])
+                        <tr>
+                            <th scope="row">{{$workhour['day']}}</th>
+                            <td>{{$workhour['open_time']}} - {{$workhour['close_time']}}</td>
+                        </tr>
                         @endif
-                    @endfor
+                    @endforeach
                 </tbody>
             </table>
 
