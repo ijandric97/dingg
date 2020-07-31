@@ -70,10 +70,6 @@ class ProductController extends Controller
             'available' => $request->has('available') ? true : false,
         ]);
 
-        if (request('discount') > 0) {
-            //TODO fuck me up fam
-        }
-
         $product->image_path = 'placeholder.png';
         if ($request->hasFile('file')) {
             // Upload the image to database and update the image_path in the database
@@ -138,15 +134,29 @@ class ProductController extends Controller
             'group' => 'nullable|string',
         ]);
 
-        $product->name = request('name');
-        $product->description = request('description');
-        $product->price = request('price');
-        $product->discount = request('discount');
-        $product->available = $request->has('available') ? true : false;
+        // Compare the products first
 
-        if (request('discount') > 0) {
-            //TODO fuck me up fam
+
+        if (!($product->name == request('name') && $product->price == request('price') && $product->discount == request('discount'))) {
+            // WE need to backup the old copy
+            $product->deleted = true;
+            $product->save();
+
+            $newProduct = new Product([
+                'name' => request('name'),
+                'price' => request('price'),
+                'discount' => request('discount'),
+            ]);
+            $newProduct->image_path = $product->image_path;
+
+            // SWAP
+            $product = $newProduct;
         }
+
+        $product->description = request('description');
+        $product->available = $request->has('available') ? true : false;
+        $product->group()->associate(Group::where('name', request('group'))->first());
+        $product->restaurant()->associate($restaurant);
 
         if ($request->has('delete_image') || $request->hasFile('file')) {
             // Delete the old file
@@ -157,11 +167,9 @@ class ProductController extends Controller
             $request->has('delete_image') ? $product->image_path = 'placeholder.png' : $product->image_path = $this->uploadImage($request);
         }
 
-        $product->group()->associate(Group::where('name', request('group'))->first());
-        $product->restaurant()->associate($restaurant);
         $product->save();
 
-        return redirect(route('restaurant.product.index', $restaurant))->with('success', 'Product Created');
+        return redirect(route('restaurant.product.index', $restaurant))->with('success', 'Product Edited');
     }
 
     /**
