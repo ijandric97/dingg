@@ -8,6 +8,8 @@ use App\Scopes\DeletedScope;
 
 class Product extends Model
 {
+    protected $fillable = ['name', 'description', 'price', 'discount', 'available'];
+
     public $timestamps = false;
 
     /**
@@ -30,15 +32,20 @@ class Product extends Model
         return $this->belongsToMany('App\Order');
     }
 
+    public function restaurant()
+    {
+        return $this->belongsTo('App\Restaurant');
+    }
+
     public function getCurrentPrice()
     {
         if ($this->discount <= 0) {
             return $this->price; // We are in the no dicount or negative discount??? return the normal price
         }
-        if ($this->discount >= 1) {
+        if ($this->discount >= 100) {
             return 0; // We are over 100% discount, return 0
         }
 
-        return $this->price - ($this->price * $this->discount);
+        return $this->price - ($this->price * ($this->discount/100));
     }
 }

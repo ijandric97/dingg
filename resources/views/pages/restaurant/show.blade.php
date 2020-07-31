@@ -51,7 +51,7 @@
         {{-- Left Column --}}
         <div class="col-md-4 mb-3">
             {{-- Restaurant Image --}}
-            <img src="{{asset('storage/images/restaurant/' . $restaurant->image_path)}}" onerror="imgError()'"
+            <img src="{{asset('storage/images/restaurant/' . $restaurant->image_path)}}" onerror="imgError()"
                 class="d-block m-auto w-100 img-fluid dingg-border rounded" alt="{{$restaurant->name}} picture">
 
             {{-- Order / Register Button --}}
@@ -216,7 +216,7 @@
                     <form method="POST" action="{{route('restaurant.comment.destroy', [$restaurant->id, $comment->id])}}">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="btn btn-danger">Delete 🗑</button> {{-- Delete comment Button --}}
+                        <button type="submit" class="btn btn-danger">🗑️ Delete</button> {{-- Delete comment Button --}}
                     </form>
                     @endcan
                 </div>

@@ -23,7 +23,7 @@
 
             {{-- Create / Submit --}}
             <div class="mb-2">
-                <button type="button" class="btn btn-success" onclick="create()">+ Create</button>
+                <button type="button" class="btn btn-success" onclick="create()">📄 Create</button>
                 <button type="submit" class="btn btn-primary">✉️ Submit</button>
             </div>
 
@@ -49,7 +49,7 @@
                         </div>
                         <button type="button" class="btn btn-secondary" onclick="moveUp(event)">↑ Move Up</button>
                         <button type="button" class="btn btn-secondary" onclick="moveDown(event)">↓ Move Down</button>
-                        <button type="button" class="btn btn-danger" onclick="deleteGroup(event)">🗑 Delete</button>
+                        <button type="button" class="btn btn-danger" onclick="deleteGroup(event)">🗑️ Delete</button>
                         {{-- We need these for existing ones --}}
                         <input type="number" name="id[]"
                             value="{{ old('id.' . $i, $i < count($groups) ? $groups[$i]->id : '') }}" hidden>

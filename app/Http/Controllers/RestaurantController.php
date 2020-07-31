@@ -9,8 +9,6 @@ use Illuminate\Support\Facades\Auth;
 
 use App\Restaurant;
 use App\Category;
-use App\Comment;
-use App\Table;
 
 class RestaurantController extends Controller
 {

@@ -105,4 +105,9 @@ class Restaurant extends Model
     {
         return $this->belongsToMany('App\User', 'favorites');
     }
+
+    public function products()
+    {
+        return $this->hasMany('App\Product');
+    }
 }

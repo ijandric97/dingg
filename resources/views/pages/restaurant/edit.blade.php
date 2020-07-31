@@ -73,8 +73,7 @@
                             @for ($i = 0; $i < 3; $i++)
                                 <td>
                                     <select name="category[]" class="custom-select">
-                                        <option value=""></option>
-                                        {{"selected"}}></option> {{-- Default blank --}}
+                                        <option value=""></option> {{-- Default blank --}}
                                         @foreach ($categories as $category)
                                             <option value="{{$category->name}}" @if(old('category.'.$i, $rest_cats[$i]['name']) == $category->name){{"selected"}}@endif>{{$category->name}}</option>
                                         @endforeach
@@ -125,7 +124,7 @@
                 <td><input type="text" class="form-control" name="t_desc[]" value=""></td> \
                 <td> \
                     <input type="number" name="t_id[]" value="" hidden> \
-                    <button type="button" class="btn btn-danger on-top" onclick="deleteTableRow(' + rowCount + ')">Delete 🗑</button> \
+                    <button type="button" class="btn btn-danger on-top" onclick="deleteTableRow(' + rowCount + ')">🗑️ Delete</button> \
                 </td> \
             </tr> \
         ';

@@ -22,7 +22,7 @@
 
             {{-- Create / Submit --}}
             <div class="mb-2">
-                <button type="button" class="btn btn-success" onclick="addTableRow()">➕ Create</button>
+                <button type="button" class="btn btn-success" onclick="addTableRow()">📄 Create</button>
                 <button type="submit" class="btn btn-primary">✉️ Submit</button>
             </div>
 
@@ -64,7 +64,7 @@
                                         <input type="number" name="id[]" value="{{ old('id.' . $i, $tables[$i]['id']) }}"
                                             hidden>
                                         <button type="button" class=" btn btn-danger on-top"
-                                            onclick="deleteTableRow({{ $i }})">Delete 🗑</button>
+                                            onclick="deleteTableRow({{ $i }})">🗑️ Delete</button>
                                     </td>
                                 </tr>
                             @endfor
@@ -95,7 +95,7 @@
                 <td><input type="text" class="form-control" name="description[]" value=""></td> \
                 <td> \
                 <input type="number" name="id[]" value="" hidden> \
-                <button type="button" class="btn btn-danger on-top" onclick="deleteTableRow(' + rowCount + ')">Delete 🗑</button> \
+                <button type="button" class="btn btn-danger on-top" onclick="deleteTableRow(' + rowCount + ')">🗑️ Delete</button> \
                     </td> \
                     </tr> \
                 ';
