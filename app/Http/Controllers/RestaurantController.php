@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 
 use App\Restaurant;
 use App\Category;
+use App\User;
 
 class RestaurantController extends Controller
 {
@@ -35,7 +36,12 @@ class RestaurantController extends Controller
      */
     public function create()
     {
-        //
+        $this->authorize('is-admin');
+
+        return view('pages.restaurant.create', [
+            'categories' => Category::orderBy('name', 'asc')->get(),
+            'users' => User::pluck('name'),
+        ]);
     }
 
     /**
@@ -46,7 +52,53 @@ class RestaurantController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $this->authorize('is-admin');
+
+        //dd($request);
+
+        // Validate
+        $request->validate([
+            'name' => 'required|string|max:50',
+            'description' => 'required|string',
+            'address' => 'required|string',
+            'phone' => 'required|string|regex:/(\+385)[ ][0-9]{2}[ ][0-9]{6}[0-9]?/',
+            'website' => 'required|string|regex:"http[s]?://.*"',
+            'file' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // 2MB FILE SIZE LIMIT
+            'owner' => 'required|exists:users,name',
+
+            'category' => 'required|array|min:3|max:3',
+            'category.*' => 'nullable|string|distinct',
+        ]);
+
+        $restaurant = new Restaurant([
+            'name' => request('name'),
+            'description' => request('description'),
+            'address' => request('address'),
+            'phone' => request('phone'),
+            'website' => request('website'),
+        ]);
+
+        // Categories
+        foreach (request('category') as $category) {
+            if ($category) {
+                $restaurant->categories()->attach(Category::where('name', $category)->first());
+            }
+        }
+
+        // Restaurant picture
+        $restaurant->image_path = 'placeholder.png';
+        if ($request->hasFile('file')) {
+            // Upload the image to database and update the image_path in the database
+            $restaurant->image_path = $this->uploadImage($request);
+        }
+
+        // OWNER
+        // HACK: For some reason i cannot get the associate() to work?
+        $restaurant->owner_id = User::where('name', request('owner'))->first()->id;
+
+        $restaurant->save();
+
+        return redirect(route('restaurant.show', $restaurant))->with('success', 'Restaurant created');
     }
 
     /**
@@ -149,9 +201,14 @@ class RestaurantController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Restaurant $restaurant)
     {
-        //
+        $this->authorize('is-admin');
+
+        $restaurant->deleted = true;
+        $restaurant->save();
+
+        return redirect(route('restaurant.index'))->with('success', 'Restaurant Deleted');
     }
 
     public function order($id)
@@ -180,12 +237,6 @@ class RestaurantController extends Controller
         return redirect(route('restaurant.show', $id));
     }
 
-    /**
-     * Undocumented function
-     *
-     * @param \Illuminate\Http\Request  $request
-     * @return string
-     */
     private function uploadImage($request)
     {
         // Create new Filename to store

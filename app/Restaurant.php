@@ -9,6 +9,8 @@ use App\Scopes\DeletedScope;
 
 class Restaurant extends Model
 {
+    protected $fillable = ['name', 'description', 'address', 'phone', 'website'];
+
     /**
      * The "booted" method of the model.
      *

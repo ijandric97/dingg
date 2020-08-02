@@ -86,7 +86,6 @@
                         </tr>
                     </tbody>
                 </table>
-                <small class="form-text text-muted">NOTE: Delete time if you are closed that day.</small>
             </div>
         </div>
 
