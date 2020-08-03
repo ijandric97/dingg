@@ -31,9 +31,9 @@
                 @foreach ($products as $product)
                     <div class="list-group-item border mb-2 d-flex @if ($product->available == false) bg-light"
                     style="filter: grayscale(1)" @else " @endif>
-                        <img src=" {{ asset('storage/images/product/' . $product->image_path) }}"
+                        <img src=" {{ asset('storage/images/' . $product->image_path) }}"
                     alt="{{ $product->name }} image" class="img-thumbnail mr-2" style="width: 80px; height: 60px;"
-                    onerror="imgError()">
+                    onerror="imgError(event)">
                     <div class="flex-fill">
                         <b><span class="text-primary">@if ($product->group) {{ $product->group->name }}
                             @else No Category @endif</span> {{ $product->name }}</b>
@@ -59,19 +59,3 @@
     </div>
 </div>
 @endsection
-
-@push('scripts')
-<script>
-    function imgError() {
-        this.onerror = null;
-        this.src = "{{ asset('storage/images/product/placeholder.png') }}";
-    }
-
-    function deleteConfirm(event) {
-        if (!confirm("Are you sure you want to delete product?")) {
-            event.preventDefault();
-        }
-    }
-
-</script>
-@endpush

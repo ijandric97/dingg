@@ -2,49 +2,39 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use App\Category;
-use Intervention\Image\ImageManagerStatic as Image;
+use Illuminate\Http\Response;
+use Illuminate\Routing\Redirector;
+use Illuminate\View\View;
 use Illuminate\Support\Facades\File;
+use App\Category;
+use App\Helpers\AppHelper;
+
 
 class CategoryController extends Controller
 {
     /**
-     * Undocumented function
-     *
-     * @param \Illuminate\Http\Request  $request
-     * @return string
-     */
-    private function uploadImage($request)
-    {
-        // Create new Filename to store
-        $filenameWithExt = $request->file('file')->getClientOriginalName();
-        $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
-        $extension = $request->file('file')->getClientOriginalExtension();
-        $filenameToStore = $filename . '_' . time() . '.' . $extension;
-
-        // Resize and store the new file
-        $image_resize = Image::make($request->file('file')->getRealPath());
-        $image_resize->resize(320, 240);
-        $image_resize->save('storage/images/category/' . $filenameToStore);
-
-        return $filenameToStore;
-    }
-
-    /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return View
      */
     public function index()
     {
-        return view('pages.category.index', ['categories' => Category::orderBy('name', 'asc')->get()]); // Case insensitive by default
+        return view('pages.category.index', [
+            'categories' => Category::orderBy('name', 'asc')->get() // Case insensitive by default
+        ]);
     }
 
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return View
+     * @throws AuthorizationException
      */
     public function create()
     {
@@ -56,8 +46,9 @@ class CategoryController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return Application|RedirectResponse|Response|Redirector
+     * @throws AuthorizationException
      */
     public function store(Request $request)
     {
@@ -78,7 +69,7 @@ class CategoryController extends Controller
         $category->image_path = 'placeholder.png';
         if ($request->hasFile('file')) {
             // Upload the image to database and update the image_path in the database
-            $category->image_path = $this->uploadImage($request);
+            $category->image_path = AppHelper::uploadImage($request);
         }
 
         $category->save();
@@ -89,33 +80,40 @@ class CategoryController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param Category $category
+     * @return Application|Factory|Response|View
      */
     public function show(Category $category)
     {
-        return view('pages.category.show', ['category' => $category]);
+        return view('pages.category.show', [
+            'category' => $category,
+            'restaurants' => $category->restaurants()->get(),
+        ]);
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param Category $category
+     * @return View
+     * @throws AuthorizationException
      */
-    public function edit($id)
+    public function edit(Category $category)
     {
         $this->authorize('is-admin', auth()->user());
 
-        return view('pages.category.edit', ['category' => Category::findOrFail($id)]);
+        return view('pages.category.edit', [
+            'category' => $category
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @param Category $category
+     * @return Application|RedirectResponse|Response|Redirector
+     * @throws AuthorizationException
      */
     public function update(Request $request, Category $category)
     {
@@ -134,10 +132,10 @@ class CategoryController extends Controller
         if ($request->has('delete_image') || $request->hasFile('file')) {
             // Delete the old file
             if ($category->image_path !== 'placeholder.png') {
-                File::delete('storage/images/category/' . $category->image_path);
+                File::delete('storage/images/' . $category->image_path);
             }
 
-            $request->has('delete_image') ? $category->image_path = 'placeholder.png' : $category->image_path = $this->uploadImage($request);
+            $request->has('delete_image') ? $category->image_path = 'placeholder.png' : $category->image_path = AppHelper::uploadImage($request);
         }
 
         $category->save();
@@ -148,15 +146,22 @@ class CategoryController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param Category $category
+     * @return Application|RedirectResponse|Response|Redirector
+     * @throws AuthorizationException
+     * @throws Exception
      */
     public function destroy(Category $category)
     {
         $this->authorize('is-admin', auth()->user());
 
         $category->restaurants()->detach(); // Remove the associations with this category in category_restaurant pivot table
-        $category->delete();
+
+        try {
+            $category->delete();
+        } catch (Exception $e) {
+            return redirect(route('category.index'))->with('error', 'Category not deleted');
+        }
 
         return redirect(route('category.index'))->with('success', 'Category deleted');
     }

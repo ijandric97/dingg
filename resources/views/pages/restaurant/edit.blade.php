@@ -19,6 +19,29 @@
     <form method="POST" action="{{route('restaurant.update', $restaurant->id)}}" enctype="multipart/form-data">
         @csrf
         @method('PUT')
+
+        @can('is-admin')
+            {{-- Owner --}}
+            <div class="card border-primary mb-3">
+                <div class="card-header d-flex">
+                    {{-- Title --}}
+                    <p class="lead m-0 align-self-center mr-3">Change owner</p>
+
+
+                    {{-- Userlist dropdown --}}
+                    <div class="autocomplete flex-fill">
+                        <input id="ownerInput" type="text" class="form-control" name="owner" placeholder="Owner">
+                    </div>
+                </div>
+                <div class="container bg-dark">
+                    @error('owner')
+                        <small class="form-text text-danger">{{$message}}</small>
+                    @enderror
+                    <small class="card-text text-warning">LEAVE BLANK IF YOU DO NOT WISH TO CHANGE ANYTHING!!!</small>
+                </div>
+            </div>
+        @endcan
+
         <div class="form-group"> {{-- Name --}}
             <label for="name">Name</label>
             <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" id="name" value="{{old('name', $restaurant->name)}}" required>
@@ -91,7 +114,7 @@
 
         <div class="form-group"> {{-- Image --}}
             <label class="d-block" for="file">Image</label>
-            <img src="{{asset('storage/images/restaurant/' . $restaurant->image_path)}}" class="d-block rounded dingg-border mb-2" alt="Restaurant picture">
+            <img src="{{asset('storage/images/' . $restaurant->image_path)}}" class="d-block rounded dingg-border mb-2" alt="Restaurant picture">
             <div class="form-check">
                 <input class="form-check-input" type="checkbox" name="delete_image" id="delete_image" value="1"> {{-- "1" will be converted to true in backend --}}
                 <label class="form-check-label" for="delete_image">Delete Image</label>
@@ -109,28 +132,75 @@
 
 @push('scripts')
 <script>
-    function deleteTableRow($id) {
-        $('#tr_'+$id).remove();
+    @can('is-admin')
+    function autocomplete(inp, arr) {
+        var currentFocus;
+        inp.addEventListener("input", function(e) {
+            var a, b, i, val = this.value;
+            closeAllLists();
+            if (!val) { return false;}
+            currentFocus = -1;
+            a = document.createElement("DIV");
+            a.setAttribute("id", this.id + "autocomplete-list");
+            a.setAttribute("class", "autocomplete-items");
+            this.parentNode.appendChild(a);
+            for (i = 0; i < arr.length; i++) {
+                if (arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
+                    b = document.createElement("DIV");
+                    b.innerHTML = "<strong>" + arr[i].substr(0, val.length) + "</strong>";
+                    b.innerHTML += arr[i].substr(val.length);
+                    b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
+                    b.addEventListener("click", function(e) {
+                        inp.value = this.getElementsByTagName("input")[0].value;
+                        closeAllLists();
+                    });
+                    a.appendChild(b);
+                }
+            }
+        });
+        inp.addEventListener("keydown", function(e) {
+            var x = document.getElementById(this.id + "autocomplete-list");
+            if (x) x = x.getElementsByTagName("div");
+            if (e.keyCode == 40) {
+                currentFocus++;
+                addActive(x);
+            } else if (e.keyCode == 38) { //up
+                currentFocus--;
+                addActive(x);
+            } else if (e.keyCode == 13) {
+                e.preventDefault();
+                if (currentFocus > -1) {
+                    if (x) x[currentFocus].click();
+                }
+            }
+        });
+        function addActive(x) {
+            if (!x) return false;
+            removeActive(x);
+            if (currentFocus >= x.length) currentFocus = 0;
+            if (currentFocus < 0) currentFocus = (x.length - 1);
+            x[currentFocus].classList.add("autocomplete-active");
+        }
+        function removeActive(x) {
+            for (var i = 0; i < x.length; i++) {
+                x[i].classList.remove("autocomplete-active");
+            }
+        }
+        function closeAllLists(elmnt) {
+            var x = document.getElementsByClassName("autocomplete-items");
+            for (var i = 0; i < x.length; i++) {
+                if (elmnt != x[i] && elmnt != inp) {
+                    x[i].parentNode.removeChild(x[i]);
+                }
+            }
+        }
+        document.addEventListener("click", function (e) {
+            closeAllLists(e.target);
+        });
     }
+    var users = {!! $users !!};
 
-    var tablesMaxId = {{$tables->max('id')}};
-
-    function addTableRow() {
-        var rowCount = $('#tables tr').length - 2; // Because header and 0 based
-        var insertString = ' \
-            <tr id="tr_' + rowCount + '"> \
-                <td><input type="number" class="form-control" name="t_seat[]" value="1" min="1" max="99" required></td> \
-                <td><input type="text" class="form-control" name="t_desc[]" value=""></td> \
-                <td> \
-                    <input type="number" name="t_id[]" value="" hidden> \
-                    <button type="button" class="btn btn-danger on-top" onclick="deleteTableRow(' + rowCount + ')">🗑️ Delete</button> \
-                </td> \
-            </tr> \
-        ';
-
-        $('#tables').append(insertString);
-
-        console.log(rowCount);
-    }
+    autocomplete(document.getElementById("ownerInput"), users);
+    @endcan
 </script>
 @endpush

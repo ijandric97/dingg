@@ -2,37 +2,41 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Intervention\Image\ImageManagerStatic as Image;
+use Illuminate\Http\Response;
+use Illuminate\Routing\Redirector;
+use Illuminate\View\View;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Auth;
 
 use App\Restaurant;
 use App\Category;
 use App\User;
+use App\Helpers\AppHelper;
 
 class RestaurantController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return View
      */
     public function index()
     {
-
-        /*$categories = Category::all();
-        foreach ($categories as $category) {
-            # TODO -> some kind of join on restaurants to get how many restaurants ar ein category just like in wolt...
-        }*/
-
-        return view('pages.restaurant.index', ['categories' => null]);
+        return view('pages.restaurant.index', [
+            'restaurants' => Restaurant::paginate(30)]
+        );
     }
 
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return View
+     * @throws AuthorizationException
      */
     public function create()
     {
@@ -47,14 +51,13 @@ class RestaurantController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return Application|RedirectResponse|Redirector|View
+     * @throws AuthorizationException
      */
     public function store(Request $request)
     {
         $this->authorize('is-admin');
-
-        //dd($request);
 
         // Validate
         $request->validate([
@@ -64,7 +67,8 @@ class RestaurantController extends Controller
             'phone' => 'required|string|regex:/(\+385)[ ][0-9]{2}[ ][0-9]{6}[0-9]?/',
             'website' => 'required|string|regex:"http[s]?://.*"',
             'file' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // 2MB FILE SIZE LIMIT
-            'owner' => 'required|exists:users,name',
+
+            'owner' => 'required|string|exists:users,name',
 
             'category' => 'required|array|min:3|max:3',
             'category.*' => 'nullable|string|distinct',
@@ -89,11 +93,11 @@ class RestaurantController extends Controller
         $restaurant->image_path = 'placeholder.png';
         if ($request->hasFile('file')) {
             // Upload the image to database and update the image_path in the database
-            $restaurant->image_path = $this->uploadImage($request);
+            $restaurant->image_path = AppHelper::uploadImage($request);
         }
 
         // OWNER
-        // HACK: For some reason i cannot get the associate() to work?
+        // ! HACK: For some reason I cannot get the associate() to work?
         $restaurant->owner_id = User::where('name', request('owner'))->first()->id;
 
         $restaurant->save();
@@ -104,8 +108,8 @@ class RestaurantController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  Restaurant  $restaurant
-     * @return \Illuminate\Http\Response
+     * @param Restaurant $restaurant
+     * @return Application|Factory|Response|View
      */
     public function show(Restaurant $restaurant)
     {
@@ -121,8 +125,9 @@ class RestaurantController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  Restaurant  $restaurant
-     * @return \Illuminate\Http\Response
+     * @param Restaurant $restaurant
+     * @return View
+     * @throws AuthorizationException
      */
     public function edit(Restaurant $restaurant)
     {
@@ -136,15 +141,17 @@ class RestaurantController extends Controller
             'categories' => $categories,
             'rest_cats' => $rest_cats,
             'tables' => $restaurant->tables()->get(),
+            'users' => User::pluck('name'),
         ]);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @param Restaurant $restaurant
+     * @return Application|RedirectResponse|Response|Redirector
+     * @throws AuthorizationException
      */
     public function update(Request $request, Restaurant $restaurant)
     {
@@ -159,6 +166,8 @@ class RestaurantController extends Controller
             'website' => 'required|string|regex:"http[s]?://.*"',
             'file' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // 2MB FILE SIZE LIMIT
             'delete_image' => 'nullable|boolean',
+
+            'owner' => 'nullable|string|exists:users,name',
 
             'category' => 'required|array|min:3|max:3',
             'category.*' => 'nullable|string|distinct',
@@ -184,10 +193,17 @@ class RestaurantController extends Controller
         if ($request->has('delete_image') || $request->hasFile('file')) {
             // Delete the old file
             if ($restaurant->image_path !== 'placeholder.png') {
-                File::delete('storage/images/restaurant/' . $restaurant->image_path);
+                File::delete('storage/images/' . $restaurant->image_path);
             }
 
-            $request->has('delete_image') ? $restaurant->image_path = 'placeholder.png' : $restaurant->image_path = $this->uploadImage($request);
+            $request->has('delete_image') ? $restaurant->image_path = 'placeholder.png' : $restaurant->image_path = AppHelper::uploadImage($request);
+        }
+
+        // OWNER
+        if (request('owner') && Auth::user()->can('is-admin')) {
+            // OWNER
+            // ! HACK: For some reason I cannot get the associate() to work?
+            $restaurant->owner_id = User::where('name', request('owner'))->first()->id;
         }
 
         $restaurant->save();
@@ -198,8 +214,9 @@ class RestaurantController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param Restaurant $restaurant
+     * @return Application|RedirectResponse|Response|Redirector
+     * @throws AuthorizationException
      */
     public function destroy(Restaurant $restaurant)
     {
@@ -209,17 +226,6 @@ class RestaurantController extends Controller
         $restaurant->save();
 
         return redirect(route('restaurant.index'))->with('success', 'Restaurant Deleted');
-    }
-
-    public function order($id)
-    {
-        if (!Auth::check()) {
-            abort(403);
-        }
-
-        $restaurant = Restaurant::findOrFail($id);
-
-        return view('pages.restaurant.order', ['restaurant' => $restaurant]);
     }
 
     public function favorite($id)
@@ -235,21 +241,5 @@ class RestaurantController extends Controller
         }
 
         return redirect(route('restaurant.show', $id));
-    }
-
-    private function uploadImage($request)
-    {
-        // Create new Filename to store
-        $filenameWithExt = $request->file('file')->getClientOriginalName();
-        $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
-        $extension = $request->file('file')->getClientOriginalExtension();
-        $filenameToStore = $filename . '_' . time() . '.' . $extension;
-
-        // Resize and store the new file
-        $image_resize = Image::make($request->file('file')->getRealPath());
-        $image_resize->resize(320, 240);
-        $image_resize->save('storage/images/restaurant/' . $filenameToStore);
-
-        return $filenameToStore;
     }
 }

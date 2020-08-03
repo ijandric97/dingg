@@ -63,7 +63,6 @@
             </div>
             <div class="form-group">
                 <label class="d-block" for="file">Image</label>
-                <img src="{{asset('storage/images/product/placeholder.png')}}" class="d-block rounded dingg-border mb-2" alt="Product picture">
                 <input type="file" class="form-control-file" name="file" id="file">
                 <small class="form-text">NOTE: Image will be resized to 320x240.</small>
                 @error('file')

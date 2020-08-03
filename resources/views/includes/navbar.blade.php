@@ -41,6 +41,16 @@
                         </a>
 
                         <div class="dropdown-menu dropdown-menu-right">
+
+                            @can('is-admin')
+                                <a class="dropdown-item" href="{{ route('user.index') }}">User Index</a>
+                            @endcan
+                            <a class="dropdown-item" href="{{ route('user.show', Auth::user()) }}">My Profile</a>
+
+                            {{-- TODO: My orders, edit profile --}}
+                            <div class="dropdown-divider"></div>
+
+                            {{-- Logout --}}
                             <a class="dropdown-item" href="{{ route('logout') }}"
                                onclick="event.preventDefault();
                                              document.getElementById('logout-form').submit();">

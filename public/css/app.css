@@ -11019,6 +11019,10 @@ a.text-dark:focus {
   z-index: 10;
 }
 
+.align-super {
+  vertical-align: super;
+}
+
 /*the container must be positioned relative:*/
 
 .autocomplete {

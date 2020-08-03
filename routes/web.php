@@ -13,25 +13,34 @@ use Illuminate\Support\Facades\Route;
 |
  */
 
+// Auth
 Auth::routes();
 
+// Home
 Route::get('/', 'HomeController@index')->name('home');
+
+
 
 Route::get('/admin', 'AdminController@index')->name('admin.index');
 //Route::get('/admin/category', 'AdminController@category')->name('admin.category');
 
-
-
-Route::get('/restaurant/{id}/favorite', 'RestaurantController@favorite')->name('restaurant.favorite');
-
-Route::get('/restaurant/{id}/order', 'RestaurantController@order')->name('restaurant.order');
-Route::post('/restaurant/{id}/order', 'RestaurantController@addOrder')->name('restaurant.add_order');
-
+// Category
 Route::resource('category', 'CategoryController');
 
+// Restaurant
+Route::get('/restaurant/{id}/favorite', 'RestaurantController@favorite')->name('restaurant.favorite');
 Route::resource('restaurant', 'RestaurantController');
 Route::resource('restaurant.comment', 'CommentController')->only(['store', 'destroy']);
 Route::resource('restaurant.group', 'GroupController')->only(['index', 'store']);
 Route::resource('restaurant.table', 'TableController')->only(['index', 'store']);
 Route::resource('restaurant.product', 'ProductController');
 Route::resource('restaurant.workhour', 'WorkhourController')->only(['index', 'store']);
+
+// User
+Route::resource('user', 'UserController')->except(['create', 'store']);
+
+// Order
+// TODO: https://stackoverflow.com/questions/46128476/same-laravel-resource-controller-for-multiple-routes
+// TODO: make OrderController inherited by RestaurantOrderController and UserOrderController :) ty
+Route::resource('restaurant.order', 'OrderController')->shallow();
+Route::resource('user.order', 'OrderController')->shallow();

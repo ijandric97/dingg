@@ -5,8 +5,14 @@ namespace App\Http\Controllers;
 use App\Product;
 use App\Group;
 use App\Restaurant;
+use App\Helpers\AppHelper;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Intervention\Image\ImageManagerStatic as Image;
+use Illuminate\Http\Response;
+use Illuminate\Routing\Redirector;
+use Illuminate\View\View;
 use Illuminate\Support\Facades\File;
 
 class ProductController extends Controller
@@ -14,7 +20,9 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @param Restaurant $restaurant
+     * @return View
+     * @throws AuthorizationException
      */
     public function index(Restaurant $restaurant)
     {
@@ -29,7 +37,9 @@ class ProductController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @param Restaurant $restaurant
+     * @return View
+     * @throws AuthorizationException
      */
     public function create(Restaurant $restaurant)
     {
@@ -44,8 +54,10 @@ class ProductController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @param Restaurant $restaurant
+     * @return Application|RedirectResponse|Response|Redirector
+     * @throws AuthorizationException
      */
     public function store(Request $request, Restaurant $restaurant)
     {
@@ -67,13 +79,13 @@ class ProductController extends Controller
             'description' => request('description'),
             'price' => request('price'),
             'discount' => request('discount'),
-            'available' => $request->has('available') ? true : false,
+            'available' => $request->has('available'),
         ]);
 
         $product->image_path = 'placeholder.png';
         if ($request->hasFile('file')) {
             // Upload the image to database and update the image_path in the database
-            $product->image_path = $this->uploadImage($request);
+            $product->image_path = AppHelper::uploadImage($request);
         }
 
         $product->group()->associate(Group::where('name', request('group'))->first());
@@ -86,19 +98,21 @@ class ProductController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Product  $product
-     * @return \Illuminate\Http\Response
+     * @param Product $product
+     * @return Response|void
      */
     public function show(Product $product)
     {
-        abort(404); // We might need this later who knows?
+        return abort(404); // We might need this later who knows?
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Product  $product
-     * @return \Illuminate\Http\Response
+     * @param Restaurant $restaurant
+     * @param Product $product
+     * @return View
+     * @throws AuthorizationException
      */
     public function edit(Restaurant $restaurant, Product $product)
     {
@@ -114,9 +128,11 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Product  $product
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @param Restaurant $restaurant
+     * @param Product $product
+     * @return Application|RedirectResponse|Response|Redirector
+     * @throws AuthorizationException
      */
     public function update(Request $request, Restaurant $restaurant, Product $product)
     {
@@ -154,17 +170,17 @@ class ProductController extends Controller
         }
 
         $product->description = request('description');
-        $product->available = $request->has('available') ? true : false;
+        $product->available = $request->has('available');
         $product->group()->associate(Group::where('name', request('group'))->first());
         $product->restaurant()->associate($restaurant);
 
         if ($request->has('delete_image') || $request->hasFile('file')) {
             // Delete the old file
             if ($product->image_path !== 'placeholder.png') {
-                File::delete('storage/images/product/' . $product->image_path);
+                File::delete('storage/images/' . $product->image_path);
             }
 
-            $request->has('delete_image') ? $product->image_path = 'placeholder.png' : $product->image_path = $this->uploadImage($request);
+            $request->has('delete_image') ? $product->image_path = 'placeholder.png' : $product->image_path = AppHelper::uploadImage($request);
         }
 
         $product->save();
@@ -175,8 +191,10 @@ class ProductController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Product  $product
-     * @return \Illuminate\Http\Response
+     * @param Restaurant $restaurant
+     * @param Product $product
+     * @return Application|RedirectResponse|Response|Redirector
+     * @throws AuthorizationException
      */
     public function destroy(Restaurant $restaurant, Product $product)
     {
@@ -186,21 +204,5 @@ class ProductController extends Controller
         $product->save();
 
         return redirect(route('restaurant.product.index', $restaurant))->with('success', 'Product Deleted');
-    }
-
-    private function uploadImage($request)
-    {
-        // Create new Filename to store
-        $filenameWithExt = $request->file('file')->getClientOriginalName();
-        $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
-        $extension = $request->file('file')->getClientOriginalExtension();
-        $filenameToStore = $filename . '_' . time() . '.' . $extension;
-
-        // Resize and store the new file
-        $image_resize = Image::make($request->file('file')->getRealPath());
-        $image_resize->resize(320, 240);
-        $image_resize->save('storage/images/product/' . $filenameToStore);
-
-        return $filenameToStore;
     }
 }
