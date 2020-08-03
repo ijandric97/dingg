@@ -17,8 +17,8 @@
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <!-- Search Bar -->
-            <form class="form-inline ml-auto my-auto">
-                <input class="form-control mt-2 mt-sm-0 border-no-right border-secondary" type="search" placeholder="Pizza place..." style="border-radius: 0.25rem 0 0 0.25rem;">
+            <form method="GET" action="{{route('home.search')}}" class="form-inline ml-auto my-auto">
+                <input class="form-control mt-2 mt-sm-0 border-no-right border-secondary" type="search" name="name" placeholder="Pizza place..." style="border-radius: 0.25rem 0 0 0.25rem;">
                 <button class="btn btn-light btn-outline-secondary text-dark my-2 my-sm-0" type="submit" style="border-radius: 0 0.25rem 0.25rem 0;">Search</button>
             </form>
 
