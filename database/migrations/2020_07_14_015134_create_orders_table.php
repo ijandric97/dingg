@@ -16,6 +16,7 @@ class CreateOrdersTable extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
+            $table->timestamp('reservation_time', 0)->nullable();
             $table->tinyInteger('status');
             $table->string('receipt_path');
             $table->foreignId('user_id')->constrained();

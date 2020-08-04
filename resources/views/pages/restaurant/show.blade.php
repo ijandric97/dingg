@@ -61,7 +61,7 @@
 
                 {{-- Order / Register Button --}}
                 {{-- !TODO: order shit --}}
-                <a href="@auth {{route('restaurant.index', $restaurant->id)}} @else {{route('register')}} @endauth"
+                <a href="@auth {{route('restaurant.order.create', $restaurant->id)}} @else {{route('register')}} @endauth"
                    class="btn btn-lg d-block mx-auto mt-2 @auth btn-primary @else btn-secondary @endauth">
                     @auth Create an order 🍕 @else Register to order 😊 @endauth
                 </a>

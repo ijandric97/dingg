@@ -43,5 +43,5 @@ Route::resource('user', 'UserController')->except(['create', 'store']);
 // Order
 // TODO: https://stackoverflow.com/questions/46128476/same-laravel-resource-controller-for-multiple-routes
 // TODO: make OrderController inherited by RestaurantOrderController and UserOrderController :) ty
-Route::resource('restaurant.order', 'OrderController')->shallow();
-Route::resource('user.order', 'OrderController')->shallow();
+Route::resource('restaurant.order', 'OrderRestaurantController')->shallow();
+Route::resource('user.order', 'OrderUserController')->shallow();
