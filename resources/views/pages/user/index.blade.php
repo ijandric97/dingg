@@ -12,9 +12,7 @@
 
         {{-- Title --}}
         <h1 class="d-inline-block mr-2 mb-3">Users</h1>
-
-        {{-- Description --}}
-        <p class="lead">Find your right food spot!</p>
+        <br>
 
         {{-- Search --}}
         <form method="GET" action="{{ route('user.index') }}">

@@ -32,7 +32,7 @@
     @stack('scripts')
     <script>
         function imgError(event) {
-            this.onerror = null;
+            event.target.onerror = null;
             event.target.src = "{{asset('storage/images/placeholder.png')}}";
         }
 

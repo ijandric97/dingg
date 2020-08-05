@@ -14,7 +14,7 @@ class ProductSeeder extends Seeder
     public function run()
     {
         $products = [
-            ['name' => 'Hamby double burger', 'description' => 'Pecivo, 2x pljeskavica, zelena salata, umak aurora, kiseli krastavci, rajčica', 'image_path' => 'placeholder.png', 'price' => 35, 'discount' => 0.10, 'available' => true, 'group_id' => 1, 'restaurant_id' => 1],
+            ['name' => 'Hamby double burger', 'description' => 'Pecivo, 2x pljeskavica, zelena salata, umak aurora, kiseli krastavci, rajčica', 'image_path' => 'placeholder.png', 'price' => 35, 'discount' => 10, 'available' => true, 'group_id' => 1, 'restaurant_id' => 1],
             ['name' => 'American burger', 'description' => 'Pecivo sa sezamom, XXL pljeskavica, senf, ketchup, salata, kiseli krastavci, sir, panceta', 'image_path' => 'placeholder.png', 'price' => 33, 'discount' => 0, 'available' => true, 'group_id' => 1, 'restaurant_id' => 1],
             ['name' => 'Extra burger', 'description' => 'Lepinja, pljeskavica, luk, kupus, zelena salata, ajvar', 'image_path' => 'placeholder.png', 'price' => 25, 'discount' => 0, 'available' => true, 'group_id' => 1, 'restaurant_id' => 1],
             ['name' => 'Texas grill burger', 'description' => 'Pecivo, pikantna pljeskavica, zelena salata, umak BBQ, prženi luk, rajčica', 'image_path' => 'placeholder.png', 'price' => 22, 'discount' => 0, 'available' => true, 'group_id' => 1, 'restaurant_id' => 1],

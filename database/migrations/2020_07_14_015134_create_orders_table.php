@@ -17,8 +17,8 @@ class CreateOrdersTable extends Migration
             $table->id();
             $table->timestamps();
             $table->timestamp('reservation_time', 0)->nullable();
-            $table->tinyInteger('status');
-            $table->string('receipt_path');
+            $table->timestamp('expiration_time', 0)->nullable();
+            $table->tinyInteger('status')->default(2); // 0 - deleted, 1 - completed, 2 - in progress
             $table->foreignId('user_id')->constrained();
             $table->foreignId('table_id')->constrained();
             $table->foreignId('restaurant_id')->constrained();

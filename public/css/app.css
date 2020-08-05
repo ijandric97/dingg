@@ -10979,6 +10979,11 @@ a.text-dark:focus {
   }
 }
 
+.grayscale {
+  -webkit-filter: grayscale(1);
+          filter: grayscale(1);
+}
+
 .border-2 {
   border-width: 2px !important;
 }

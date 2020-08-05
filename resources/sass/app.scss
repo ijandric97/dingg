@@ -8,6 +8,10 @@
 @import "~bootstrap/scss/bootstrap";
 
 // Custom CSS
+.grayscale {
+    filter: grayscale(1);
+}
+
 .border-2 {
     border-width: 2px !important;
 }

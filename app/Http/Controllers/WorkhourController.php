@@ -4,14 +4,22 @@ namespace App\Http\Controllers;
 
 use App\Workhour;
 use App\Restaurant;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Routing\Redirector;
+use Illuminate\View\View;
 
 class WorkhourController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @param Restaurant $restaurant
+     * @return View
+     * @throws AuthorizationException
      */
     public function index(Restaurant $restaurant)
     {
@@ -26,8 +34,10 @@ class WorkhourController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @param Restaurant $restaurant
+     * @return Application|RedirectResponse|Response|Redirector
+     * @throws AuthorizationException
      */
     public function store(Request $request, Restaurant $restaurant)
     {

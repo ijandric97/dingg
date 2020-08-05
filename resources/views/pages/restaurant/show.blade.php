@@ -19,7 +19,7 @@
                     <p class="lead m-0 align-self-center">Control Panel</p>
 
                     {{-- Orders Button --}}
-                    <a class="btn btn-primary ml-auto" href="{{route('restaurant.edit', $restaurant)}}" role="button">🧾
+                    <a class="btn btn-primary ml-auto" href="{{route('restaurant.order.index', $restaurant)}}" role="button">🧾
                         Orders</a>
 
                     {{-- Edit Dropdown --}}

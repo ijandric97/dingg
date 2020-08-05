@@ -2,8 +2,10 @@
 
 namespace App\Console;
 
+use DB;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use App\Order;
 
 class Kernel extends ConsoleKernel
 {
@@ -25,6 +27,11 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         // $schedule->command('inspire')->hourly();
+        $schedule->call(function () {
+            DB::table('orders')
+                ->where('reservation_time', '<', DB::raw('NOW()'))
+                ->update(array('status' => 1));
+        })->everyMinute();
     }
 
     /**

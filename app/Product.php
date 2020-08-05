@@ -46,6 +46,6 @@ class Product extends Model
             return 0; // We are over 100% discount, return 0
         }
 
-        return $this->price - ($this->price * ($this->discount/100));
+        return round($this->price - ($this->price * ($this->discount/100)), 2);
     }
 }

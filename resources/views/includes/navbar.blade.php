@@ -18,8 +18,11 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <!-- Search Bar -->
             <form method="GET" action="{{route('home.search')}}" class="form-inline ml-auto my-auto">
-                <input class="form-control mt-2 mt-sm-0 border-no-right border-secondary" type="search" name="name" placeholder="Pizza place..." style="border-radius: 0.25rem 0 0 0.25rem;">
-                <button class="btn btn-light btn-outline-secondary text-dark my-2 my-sm-0" type="submit" style="border-radius: 0 0.25rem 0.25rem 0;">Search</button>
+                <input class="form-control mt-2 mt-sm-0 border-no-right border-secondary" type="search" name="name"
+                       placeholder="Pizza place..." style="border-radius: 0.25rem 0 0 0.25rem;">
+                <button class="btn btn-light btn-outline-secondary text-dark my-2 my-sm-0" type="submit"
+                        style="border-radius: 0 0.25rem 0.25rem 0;">Search
+                </button>
             </form>
 
             <!-- User / Login Section -->
@@ -36,7 +39,8 @@
                     @endif
                 @else
                     <li class="nav-item active dropdown">
-                        <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" v-pre>
+                        <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button"
+                           data-toggle="dropdown" v-pre>
                             {{ Auth::user()->name }} <span class="caret"></span>
                         </a>
 
@@ -44,13 +48,24 @@
 
                             @can('is-admin')
                                 <a class="dropdown-item" href="{{ route('user.index') }}">User Index</a>
+                                {{-- Admin should view all orders by everything honestly --}}
+                                <div class="dropdown-divider"></div>
                             @endcan
+
+                            @can('is-restaurant')
+                                <a class="dropdown-item" href="{{ route('restaurant.order.index') }}">Restaurant Orders</a>
+                                <div class="dropdown-divider"></div>
+                            @endcan
+
                             <a class="dropdown-item" href="{{ route('user.show', Auth::user()) }}">My Profile</a>
+                            <a class="dropdown-item" href="{{ route('user.order.index', Auth::user()) }}">My Orders</a>
+
 
                             {{-- TODO: My orders, edit profile --}}
-                            <div class="dropdown-divider"></div>
+
 
                             {{-- Logout --}}
+                            <div class="dropdown-divider"></div>
                             <a class="dropdown-item" href="{{ route('logout') }}"
                                onclick="event.preventDefault();
                                              document.getElementById('logout-form').submit();">
