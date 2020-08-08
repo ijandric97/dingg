@@ -39,7 +39,7 @@ class OrderRestaurantController extends Controller
             'orders' => $restaurant->orders()
                 ->orderBy('status', 'desc')
                 ->orderBy('reservation_time', 'asc')
-                ->get(),
+                ->paginate(50),
             'colors' => $colors,
         ]);
     }
@@ -100,6 +100,11 @@ class OrderRestaurantController extends Controller
             throw ValidationException::withMessages(['datetime' => 'You can\'t reserve in the past!']);
         }
 
+        // Check if the time is not at least 30 min from now
+        if (Carbon::parse(request('datetime'))->lt(Carbon::now()->addMinutes(30))) {
+            throw ValidationException::withMessages(['datetime' => 'You can\'t reserve less than 30 minutes from now!']);
+        }
+
         $table = Table::findOrFail(request('table'));
         $datetime_start = Carbon::parse(request('datetime'))->toDateTimeString();
         $datetime_expire = Carbon::parse(request('datetime'))->addHour()->toDateTimeString();
@@ -115,7 +120,7 @@ class OrderRestaurantController extends Controller
             }
 
             throw ValidationException::withMessages(['datetime' => 'Table is occupied: ' . $retstring]);
-        };
+        }
 
         // Check if end time is ok
         $occupied = $table->orders()->where('reservation_time', '<=', $datetime_expire)
@@ -128,7 +133,7 @@ class OrderRestaurantController extends Controller
             }
 
             throw ValidationException::withMessages(['datetime' => 'Table is occupied: ' . $retstring]);
-        };
+        }
 
         // Create the order
         $order = new Order();
@@ -153,50 +158,48 @@ class OrderRestaurantController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Show the form for editing the specified resource.
      *
      * @param Restaurant $restaurant
      * @param Order $order
      * @return View
+     * @throws AuthorizationException
      */
-    public function show(Restaurant $restaurant, Order $order)
+    public function edit(Restaurant $restaurant, Order $order)
     {
-        return view('pages.restaurant.order.show', [
+        $this->authorize('edit-restaurant', $restaurant);
 
+        $colors = [
+            '0' => 'bg-danger',
+            '1' => 'bg-success',
+            '2' => 'bg-dark',
+        ];
+
+        return view('pages.restaurant.order.edit', [
+            'restaurant' => $restaurant,
+            'order' => $order,
+            'table' => $order->table,
+            'colors' => $colors,
+            'products' => $order->products()->get(),
         ]);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param Order $order
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Order $order)
-    {
-        //
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param Request $request
+     * @param Restaurant $restaurant
      * @param Order $order
-     * @return \Illuminate\Http\Response
+     * @return Application|RedirectResponse|Redirector
+     * @throws AuthorizationException
      */
-    public function update(Request $request, Order $order)
+    public function update(Request $request, Restaurant $restaurant, Order $order)
     {
-        //
-    }
+        $this->authorize('edit-restaurant', $restaurant);
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param Order $order
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Order $order)
-    {
-        //
+        $order->status = 0;
+        $order->save();
+
+        return redirect(route('restaurant.order.edit', [$restaurant, $order]))->with('success', 'Order declined');
     }
 }

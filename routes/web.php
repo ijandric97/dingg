@@ -20,11 +20,6 @@ Auth::routes();
 Route::get('/', 'HomeController@index')->name('home');
 Route::get('/search', 'HomeController@search')->name('home.search');
 
-
-
-Route::get('/admin', 'AdminController@index')->name('admin.index');
-//Route::get('/admin/category', 'AdminController@category')->name('admin.category');
-
 // Category
 Route::resource('category', 'CategoryController');
 
@@ -37,11 +32,16 @@ Route::resource('restaurant.table', 'TableController')->only(['index', 'store'])
 Route::resource('restaurant.product', 'ProductController');
 Route::resource('restaurant.workhour', 'WorkhourController')->only(['index', 'store']);
 
+// Request
+Route::resource('request', 'RequestController')->only('index', 'edit', 'update')
+    ->parameters(['request' => 'apprequest']);
+
 // User
+Route::get('/user/{user}/restaurants', 'UserController@restaurants')->name('user.restaurants');
+Route::put('/user/{user}/role', 'UserController@role')->name('user.role');
 Route::resource('user', 'UserController')->except(['create', 'store']);
+Route::resource('user.request', 'RequestUserController')->except(['show', 'edit', 'update']);
 
 // Order
-// TODO: https://stackoverflow.com/questions/46128476/same-laravel-resource-controller-for-multiple-routes
-// TODO: make OrderController inherited by RestaurantOrderController and UserOrderController :) ty
-Route::resource('restaurant.order', 'OrderRestaurantController');
-Route::resource('user.order', 'OrderUserController')->shallow();
+Route::resource('restaurant.order', 'OrderRestaurantController')->except(['show', 'delete']);
+Route::resource('user.order', 'OrderUserController')->only(['index', 'edit', 'update']);

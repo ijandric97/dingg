@@ -2,8 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Order;
-use App\User;
+use App\Request as AppRequest;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\RedirectResponse;
@@ -11,18 +10,17 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Redirector;
 use Illuminate\View\View;
 
-class OrderUserController extends Controller
+class RequestController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @param User $user
      * @return View
      * @throws AuthorizationException
      */
-    public function index(User $user)
+    public function index()
     {
-        $this->authorize('edit-user', $user);
+        $this->authorize('is-admin');
 
         $colors = [
             '0' => 'text-danger',
@@ -30,28 +28,22 @@ class OrderUserController extends Controller
             '2' => 'text-dark',
         ];
 
-        return view('pages.user.order.index', [
-            'user' => $user,
-            'orders' => $user->orders()
-                ->orderBy('status', 'desc')
-                ->orderBy('reservation_time', 'asc')
-                ->paginate(50),
+        return view('pages.request.index', [
+            'requests' => AppRequest::paginate(50),
             'colors' => $colors,
         ]);
     }
 
-
     /**
      * Show the form for editing the specified resource.
      *
-     * @param User $user
-     * @param Order $order
+     * @param AppRequest $apprequest
      * @return View
      * @throws AuthorizationException
      */
-    public function edit(User $user, Order $order)
+    public function edit(AppRequest $apprequest)
     {
-        $this->authorize('edit-user', $user);
+        $this->authorize('is-admin');
 
         $colors = [
             '0' => 'bg-danger',
@@ -59,12 +51,9 @@ class OrderUserController extends Controller
             '2' => 'bg-dark',
         ];
 
-        return view('pages.user.order.edit', [
-            'user' => $user,
-            'order' => $order,
-            'table' => $order->table,
+        return view('pages.request.edit', [
+            'request' => $apprequest,
             'colors' => $colors,
-            'products' => $order->products()->get(),
         ]);
     }
 
@@ -72,18 +61,25 @@ class OrderUserController extends Controller
      * Update the specified resource in storage.
      *
      * @param Request $request
-     * @param User $user
-     * @param Order $order
+     * @param AppRequest $apprequest
      * @return Application|RedirectResponse|Redirector
      * @throws AuthorizationException
      */
-    public function update(Request $request, User $user, Order $order)
+    public function update(Request $request, AppRequest $apprequest)
     {
-        $this->authorize('edit-user', $user);
+        $this->authorize('is-admin');
 
-        $order->status = 0;
-        $order->save();
+        $request->validate([
+           'status' => 'required|in:1,0'
+        ]);
 
-        return redirect(route('user.order.edit', [$user, $order]))->with('success', 'Order canceled');
+        if ($apprequest->status < 2) {
+            return redirect(route('request.index'))->with('error', 'Can only update in progress requests.');
+        }
+
+        $apprequest->status = request('status');
+        $apprequest->save();
+
+        return redirect(route('request.index'))->with('success', 'Request status modified.');
     }
 }

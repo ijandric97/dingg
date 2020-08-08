@@ -12,6 +12,31 @@
             </ol>
         </nav>
 
+        {{-- Control Panel --}}
+        @can('is-admin')
+            <div class="card border-primary mb-3">
+                <div class="card-header d-flex align-items-center">
+                    {{-- Title --}}
+                    <p class="lead m-0 align-self-center">Control Panel</p>
+
+                    {{-- Edit Role --}}
+                    <form class="ml-auto d-flex" method="POST" action="{{route('user.role', $user)}}">
+                        @csrf
+                        @method('PUT')
+
+                        <select name="role" class="custom-select w-25 flex-fill mx-2">
+                            <option value="user">User</option>
+                            <option value="restaurant">Restaurant</option>
+                        </select>
+                        <button type="submit" class="btn btn-primary ml-auto">📄 Change Role</button>
+                    </form>
+
+                    {{-- Create Button --}}
+
+                </div>
+            </div>
+        @endcan
+
         {{-- Title --}}
         <h1>Edit User</h1>
 

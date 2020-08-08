@@ -22,9 +22,18 @@
             <div class="card border-primary mb-3">
                 <div class="card-header d-flex">
                     {{-- Title --}}
-                    <p class="lead m-0 align-self-center">Control Panel</p>
+                    <p class="lead m-0 mr-auto align-self-center">Control Panel</p>
 
-                    <a class="btn btn-warning ml-auto" href="{{route('user.edit', $user)}}" role="button">✏️ Edit</a>
+                    {{-- Orders Button --}}
+                    <a class="btn btn-secondary ml-2" href="{{route('user.request.index', $user)}}" role="button">📫 Requests</a>
+                    <a class="btn btn-primary ml-2" href="{{route('user.order.index', $user)}}" role="button">🧾
+                        Orders</a>
+                    <a class="btn btn-warning ml-2" href="{{route('user.edit', $user)}}" role="button">✏️ Edit</a>
+
+                    {{-- Restaurants --}}
+                    @if($user->role == 'restaurant')
+                        <a class="btn btn-secondary ml-2" href="{{ route('user.restaurants', $user) }}">🍴 Restaurants</a>
+                    @endif
 
                     {{-- Delete Button --}}
                     @can('is-admin')

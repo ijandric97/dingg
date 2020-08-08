@@ -21,9 +21,9 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();
-            $table->string('role');
-            $table->string('phone');
-            $table->string('image_path');
+            $table->string('role')->default('user');
+            $table->string('phone')->default('');
+            $table->string('image_path')->default('placeholder.png');
             $table->boolean('deleted')->default(false); // WE DONT DELETE, WE SET AS CLOSED
         });
     }

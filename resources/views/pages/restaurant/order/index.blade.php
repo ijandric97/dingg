@@ -32,7 +32,7 @@
                 </thead>
                 <tbody>
                     @foreach($orders as $order)
-                        <tr onclick="window.location='{{route('restaurant.order.show', [$restaurant, $order])}}';"
+                        <tr onclick="window.location='{{route('restaurant.order.edit', [$restaurant, $order])}}';"
                             style="cursor: pointer;">
                             <th scope="row">{{$order->id}}</th>
                             <td>{{$order->reservation_time}}</td>
@@ -43,6 +43,11 @@
                     @endforeach
                 </tbody>
             </table>
+        </div>
+
+        {{-- Pagination --}}
+        <div class="mt-2">
+            {{$orders->links()}}
         </div>
     </div>
 @endsection

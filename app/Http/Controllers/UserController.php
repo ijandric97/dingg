@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\User;
 use App\Helpers\AppHelper;
+use App\Request as AppRequest;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\RedirectResponse;
@@ -59,6 +60,22 @@ class UserController extends Controller
     }
 
     /**
+     * Display the restaurants user owns.
+     *
+     * @param User $user
+     * @throws AuthorizationException
+     */
+    public function restaurants(User $user)
+    {
+        $this->authorize('is-restaurant');
+
+        return view('pages.user.restaurants', [
+            'user' => $user,
+            'restaurants' => $user->ownedRestaurants()->paginate(30),
+        ]);
+    }
+
+    /**
      * Show the form for editing the specified resource.
      *
      * @param User $user
@@ -106,6 +123,31 @@ class UserController extends Controller
         $user->save();
 
         return redirect(route('user.show', $user))->with('success', 'User Edited');
+    }
+
+    /**
+     * Edit users role
+     *
+     * @param Request $request
+     * @param User $user
+     * @return Application|RedirectResponse|Redirector
+     * @throws AuthorizationException
+     */
+    public function role(Request $request, User $user)
+    {
+        $this->authorize('is-admin');
+
+        $request->validate([
+           'role' => 'required|in:user,restaurant',
+        ]);
+
+        if ($user->role != 'admin') {
+            $user->role = request('role');
+            $user->save();
+            return redirect(route('user.show', $user))->with('success', 'Role Edited');
+        }
+
+        return redirect(route('user.show', $user))->with('error', 'Can\'t change admin');
     }
 
     /**

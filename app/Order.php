@@ -19,7 +19,7 @@ class Order extends Model
 
     public function products()
     {
-        return $this->belongsToMany('App\Product');
+        return $this->belongsToMany('App\Product')->withPivot(['count']);
     }
 
     public function user()
@@ -29,5 +29,15 @@ class Order extends Model
 
     public function getStatus() {
         return ($this->status <= 0) ? 'Canceled' : ($this->status > 1 ? 'In progress' : 'Completed');
+    }
+
+    public function getTotalPrice() {
+        $price = 0;
+
+        foreach ($this->products()->get() as $product) {
+            $price = $price + ($product->getCurrentPrice() * $product->pivot->count);
+        }
+
+        return $price;
     }
 }

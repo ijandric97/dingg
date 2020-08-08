@@ -48,21 +48,18 @@
 
                             @can('is-admin')
                                 <a class="dropdown-item" href="{{ route('user.index') }}">User Index</a>
-                                {{-- Admin should view all orders by everything honestly --}}
+                                <a class="dropdown-item" href="{{ route('request.index') }}">Request Index</a>
                                 <div class="dropdown-divider"></div>
                             @endcan
 
                             @can('is-restaurant')
-                                <a class="dropdown-item" href="{{ route('restaurant.order.index') }}">Restaurant Orders</a>
+                                <a class="dropdown-item" href="{{ route('user.restaurants', Auth::user()) }}">My Restaurants</a>
                                 <div class="dropdown-divider"></div>
                             @endcan
 
                             <a class="dropdown-item" href="{{ route('user.show', Auth::user()) }}">My Profile</a>
                             <a class="dropdown-item" href="{{ route('user.order.index', Auth::user()) }}">My Orders</a>
-
-
-                            {{-- TODO: My orders, edit profile --}}
-
+                            <a class="dropdown-item" href="{{ route('user.request.index', Auth::user()) }}">My Requests</a>
 
                             {{-- Logout --}}
                             <div class="dropdown-divider"></div>
