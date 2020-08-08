@@ -28,15 +28,26 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $favorites = null;
-        if (Auth::user()) {
-            $favorites =  Auth::user()->favorites()->inRandomOrder()->limit(3)->get();
+        $favorites = [];
+        $recommended = collect(new Restaurant());;
+        $user = Auth::user();
+
+        if ($user) {
+            $favorites =  $user->favorites()->inRandomOrder()->limit(3)->get();
+
+            $lastOrder =  $user->orders()->with('restaurant')->orderBy('id', 'desc')->first();
+            if ($lastOrder) {
+                $recommended = $lastOrder->restaurant
+                    ->categories()->inRandomOrder()->limit(1)->first()
+                    ->restaurants()->inRandomOrder()->limit(3)->get();
+            }
         }
 
         return view('pages.home', [
             'categories' => Category::inRandomOrder()->limit(3)->get(),
             'restaurants' => Restaurant::inRandomOrder()->limit(3)->get(),
             'favorites' => $favorites,
+            'recommended' => $recommended,
         ]);
     }
 

@@ -29,7 +29,6 @@
         {{-- Description --}}
         <p class="lead">Find your right food spot!</p>
 
-        {{-- TODO: Add different styles? Perhaps like cards and stuff? --}}
         {{-- Restaurant cards --}}
         <x-RestaurantCards :restaurants="$restaurants"></x-RestaurantCards>
 

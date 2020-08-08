@@ -31,7 +31,6 @@
         <p class="lead">Pick restaurants from one of the  {{count($categories)}} delicious categories!</p>
     @endif
 
-    {{-- TODO: Add different styles? Perhaps like cards and stuff? --}}
     <x-CategoryCards :categories="$categories"></x-CategoryCards> {{-- Cards --}}
 
 </div>

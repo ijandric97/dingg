@@ -20,12 +20,12 @@
             {{-- Favorites --}}
             <h1 class="d-inline-block mr-2 mb-3">Favorites ❤️</h1>
             <a class="btn btn-primary align-super" role="button"
-               href="{{route('user.show', Auth::user())}}">View All ↗</a> {{-- TODO: user favorites index route --}}
+               href="{{route('user.show', Auth::user())}}">View All ↗</a>
             <x-RestaurantCards :restaurants="$favorites"></x-RestaurantCards> {{-- 3 Random Favorites --}}
-            {{--
-                User Section
-                TODO: we put recommended restaurants for user stuff
-            --}}
+
+            {{-- Favorites --}}
+            <h1 class="d-inline-block mr-2 mb-3">Recommended for you 👌</h1>
+            <x-RestaurantCards :restaurants="$recommended"></x-RestaurantCards> {{-- 3 Random Recommended --}}
         @endguest
 
         {{-- Category --}}

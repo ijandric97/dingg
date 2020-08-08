@@ -16,8 +16,6 @@ use Illuminate\View\View;
 
 class UserController extends Controller
 {
-
-
     /**
      * Display a listing of the resource.
      *

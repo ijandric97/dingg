@@ -95,19 +95,33 @@ class OrderRestaurantController extends Controller
             'count.' => 'numeric|min:0|max:10',
         ]);
 
+        $datetime = Carbon::parse(request('datetime'));
+        $ordertime = $datetime->hour. ':' . $datetime->minute . ':' . $datetime->second;
+
+        // Check if the time is outside workhours
+        $workhour = $restaurant->workhours()
+            ->where('day_of_week', '=', $datetime->dayOfWeek)
+            ->where('open_time', '<', $ordertime)
+            ->where('close_time', '>', $ordertime)
+            ->first();
+
+        if ($workhour === null) {
+            throw ValidationException::withMessages(['datetime' => 'Restaurant is not open at that time!']);
+        }
+
         // Check if the time is not in the past
-        if (Carbon::parse(request('datetime'))->lt(Carbon::now())) {
+        if ($datetime->lt(Carbon::now())) {
             throw ValidationException::withMessages(['datetime' => 'You can\'t reserve in the past!']);
         }
 
         // Check if the time is not at least 30 min from now
-        if (Carbon::parse(request('datetime'))->lt(Carbon::now()->addMinutes(30))) {
+        if ($datetime->lt(Carbon::now()->addMinutes(30))) {
             throw ValidationException::withMessages(['datetime' => 'You can\'t reserve less than 30 minutes from now!']);
         }
 
         $table = Table::findOrFail(request('table'));
-        $datetime_start = Carbon::parse(request('datetime'))->toDateTimeString();
-        $datetime_expire = Carbon::parse(request('datetime'))->addHour()->toDateTimeString();
+        $datetime_start = $datetime->toDateTimeString();
+        $datetime_expire = $datetime->addHour()->toDateTimeString();
 
         // Check if start time is ok
         $occupied = $table->orders()->where('reservation_time', '<=', $datetime_start)
