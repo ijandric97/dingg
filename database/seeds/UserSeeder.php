@@ -6,8 +6,6 @@ use App\User;
 
 class UserSeeder extends Seeder
 {
-
-
     /**
      * Run the database seeds.
      *
@@ -20,13 +18,14 @@ class UserSeeder extends Seeder
         //User::truncate();
 
         $users = [
-            ['name' => 'food_city_hamburger', 'email' => 'food_city_hamburger@test.com', 'password' => bcrypt('12345678'), 'role' => 'restaurant', 'phone' => '+38551330653', 'image_path' => 'placeholder.jpg'],
-            ['name' => 'test_admin', 'email' => 'test_admin@test.com', 'password' => bcrypt('12345678'), 'role' => 'admin', 'phone' => '+38551330653', 'image_path' => 'placeholder.jpg'],
-            ['name' => 'jandra_1', 'email' => 'jandra_1@test.com', 'password' => bcrypt('12345678'), 'role' => 'user', 'phone' => '+38551330653', 'image_path' => 'placeholder.jpg'],
-            ['name' => 'jandra_2', 'email' => 'jandra_2@test.com', 'password' => bcrypt('12345678'), 'role' => 'user', 'phone' => '+38551330653', 'image_path' => 'placeholder.jpg'],
-            ['name' => 'jandra_3', 'email' => 'jandra_3@test.com', 'password' => bcrypt('12345678'), 'role' => 'user', 'phone' => '+38551330653', 'image_path' => 'placeholder.jpg'],
-            ['name' => 'jandra_4', 'email' => 'jandra_4@test.com', 'password' => bcrypt('12345678'), 'role' => 'user', 'phone' => '+38551330653', 'image_path' => 'placeholder.jpg'],
-            ['name' => 'jandra_5', 'email' => 'jandra_5@test.com', 'password' => bcrypt('12345678'), 'role' => 'user', 'phone' => '+38551330653', 'image_path' => 'placeholder.jpg']
+            ['name' => 'admin', 'email' => 'admin@dingg.com', 'password' => bcrypt('JaSamAdmin'), 'role' => 'admin', 'phone' => ''],
+            ['name' => 'food_village', 'email' => 'info@food_village.com', 'password' => bcrypt('12345678'), 'role' => 'restaurant', 'phone' => '+385 51 330653'],
+            ['name' => 'megic', 'email' => 'info@megich.com', 'password' => bcrypt('12345678'), 'role' => 'restaurant', 'phone' => '+385 51 648759'],
+            ['name' => 'user1', 'email' => 'user1@test.com', 'password' => bcrypt('12345678'), 'role' => 'user', 'phone' => '+385 99 1234567'],
+            ['name' => 'user2', 'email' => 'user2@test.com', 'password' => bcrypt('12345678'), 'role' => 'user', 'phone' => '+385 99 1234567'],
+            ['name' => 'user3', 'email' => 'user3@test.com', 'password' => bcrypt('12345678'), 'role' => 'user', 'phone' => '+385 99 1234567'],
+            ['name' => 'user4', 'email' => 'user4@test.com', 'password' => bcrypt('12345678'), 'role' => 'user', 'phone' => '+385 99 1234567'],
+            ['name' => 'user5', 'email' => 'user5@test.com', 'password' => bcrypt('12345678'), 'role' => 'user', 'phone' => '+385 99 1234567']
         ];
 
         foreach ($users as $user) {

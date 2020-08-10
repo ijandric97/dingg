@@ -19,13 +19,13 @@ class RestaurantSeeder extends Seeder
 
         $restaurants = [
             [
-                'name' => 'Food City Hamby', 'description' => 'We are your burger buddy', 'address' => 'Ante Starčevića 11a',
-                'phone' => '+385 51 330653', 'website' => 'http://www.foodcity.hr/lokali.php#', 'owner_id' => 1, 'image_path' => 'american.jpg',
+                'name' => 'Food Village Centar', 'description' => 'We are your burger buddy', 'address' => 'Ante Star 1',
+                'phone' => '+385 51 311653', 'website' => 'http://www.foodvillage.hr/lokali.php#', 'owner_id' => 2, 'image_path' => 'american.jpg',
                 'deleted' => false
             ],
             [
-                'name' => 'test', 'description' => 'test', 'address' => 'test',
-                'phone' => '+385 51 330653', 'website' => 'http://www.example.com', 'owner_id' => 1, 'image_path' => 'placeholder.png',
+                'name' => 'Megić', 'description' => 'Volin megić!', 'address' => 'Centar 1',
+                'phone' => '+385 51 648759', 'website' => 'http://www.megich.hr', 'owner_id' => 1, 'image_path' => 'placeholder.png',
                 'deleted' => true
             ],
         ];

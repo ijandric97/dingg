@@ -13,7 +13,6 @@ class CategorySeeder extends Seeder
      */
     public function run()
     {
-        //Category::truncate(); // Remove duplicates
         // The images will have to be copied into resources/images/category/ folder :)
         $categories =  [
             ['name' => 'American', 'description' => 'Never fear, we’ve got burgers and beer!', 'image_path' => 'american.jpg'],
