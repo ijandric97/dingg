@@ -19,7 +19,7 @@ class CreateRestaurantsTable extends Migration
             $table->string('name');
             $table->string('description');
             $table->string('address');
-            $table->string('phone')->default('');;
+            $table->string('phone')->default('');
             $table->string('website')->default('');
             $table->string('image_path')->default('placeholder.png');;
             $table->foreignId('owner_id')->constrained('users');
