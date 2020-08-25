@@ -8,23 +8,23 @@ class Order extends Model
 {
     public function table()
     {
-        return $this->belongsTo('App\Table');
+        return $this->belongsTo('App\Table')->withoutGlobalScopes();
     }
 
     // ERROR: INVESTIGATE, THIS MAY BE REDUNDANT TBH
     public function restaurant()
     {
-        return $this->belongsTo('App\Restaurant');
+        return $this->belongsTo('App\Restaurant')->withoutGlobalScopes();
     }
 
     public function products()
     {
-        return $this->belongsToMany('App\Product')->withPivot(['count']);
+        return $this->belongsToMany('App\Product')->withoutGlobalScopes()->withPivot(['count']);
     }
 
     public function user()
     {
-        return $this->belongsTo('App\User');
+        return $this->belongsTo('App\User')->withoutGlobalScopes();
     }
 
     public function getStatus() {
@@ -34,7 +34,7 @@ class Order extends Model
     public function getTotalPrice() {
         $price = 0;
 
-        foreach ($this->products()->get() as $product) {
+        foreach ($this->products()->withoutGlobalScopes()->get() as $product) {
             $price = $price + ($product->getCurrentPrice() * $product->pivot->count);
         }
 

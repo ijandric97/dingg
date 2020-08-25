@@ -159,6 +159,10 @@ class UserController extends Controller
     {
         $this->authorize('is-admin');
 
+        if ($user->role === 'admin') {
+            return redirect(route('user.index', $user))->with('error', 'Can\'t delete admin');
+        }
+
         $user->deleted = true;
         $user->save();
 
